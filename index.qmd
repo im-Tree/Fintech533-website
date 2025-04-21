@@ -1,104 +1,406 @@
 ---
 title: "AlphaSignal533"
 author: "Xiaoya Dong, Yingxue Wang, Yueqi He"
-date: "2025-04-09"
+date: "2025-04-21"
 format:
   html:
     toc: true
+    include-in-header:
+      - text: |
+          <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+          <script src="static/price_data.js"></script>
+params:
+  ticker: "AAPL"
 editor: visual
 ---
 
-### Long–Short Trend Strategy
+### Mean Reversion Strategy
 
-#### 1. Portfolio Universe
+#### 1. Strategy Overview
+Mean reversion: Since the stocks in the portfolio all come from representative large companies and have high liquidity. The prices of these stocks usually do not fluctuate sharply. Therefore, we formulate the mean reversion strategy, expecting the stock price to pull back when the stock price is high and short selling. When the stock price is low, it is expected to rebound.
 
+#### 2. Portfolio Choice
 We selected these 10 stocks for their strong **sector representation**, **high liquidity**, and **market relevance**. Each stock comes from a different major industry, ensuring diversification and reducing sector-specific risk. As large-cap, actively traded companies, they offer reliable data and efficient execution,.
 
-- **AAPL** – Information Electronics
-- **MSFT** – Information Technology
-- **JPM** – Financial
-- **XOM** – Energy
-- **JNJ** – Healthcare
-- **PG** – Consumer Staples
-- **NVDA** – Semiconductors
-- **CAT** – Industrial
-- **HD** – Retail
-- **AMZN** – Communication Services
+```{python}
+#| echo: false
+#| dataframe-show-index: true
+#| dataframe-index-label: "No."
+
+import pandas as pd
+
+df = pd.DataFrame({
+    "Ticker": ["AAPL", "MSFT", "JPM", "XOM", "JNJ",
+               "PG", "NVDA", "CAT", "HD", "AMZN"],
+    "Industry": ["Information Electronics", "Information Technology",
+                 "Financial", "Energy", "Healthcare",
+                 "Consumer Staples", "Semiconductors",
+                 "Industrial", "Retail", "Communication Services"]
+})
+df.index = df.index + 1
+df
+```
+
+### 📊View Last Month’s Stock Price
+
+
+<h4>🔽 Choose a Stock:</h4>
+
+<select id="stock-selector">
+  <option value="AAPL">AAPL</option>
+  <option value="MSFT">MSFT</option>
+  <option value="JPM">JPM</option>
+  <option value="XOM">XOM</option>
+  <option value="JNJ">JNJ</option>
+  <option value="PG">PG</option>
+  <option value="NVDA">NVDA</option>
+  <option value="CAT">CAT</option>
+  <option value="HD">HD</option>
+  <option value="AMZN">AMZN</option>
+</select>
+
+<div id="plotly-container" style="height: 500px;"></div>
+
+<script>
+function plotStock(ticker) {
+  const data = priceData[ticker];
+  if (!data || data.length === 0) {
+    document.getElementById('plotly-container').innerHTML = "<p>No data available for " + ticker + ".</p>";
+    return;
+  }
+
+  const trace = {
+    x: data.map(d => d.Date),
+    y: data.map(d => d.Close),
+    mode: 'lines+markers',
+    name: ticker,
+    line: { color: '#1f77b4' }
+  };
+  const layout = {
+    title: `${ticker} - Last Month Closing Prices`,
+    xaxis: { title: 'Date' },
+    yaxis: { title: 'Price (USD)' }
+  };
+  Plotly.newPlot('plotly-container', [trace], layout);
+}
+
+window.addEventListener("load", function () {
+  plotStock("AAPL");
+
+  document.getElementById("stock-selector").addEventListener("change", function () {
+    plotStock(this.value);
+  });
+});
+</script>
 
 
 
-#### 2. Rebalancing Frequency
 
-The portfolio is rebalanced monthly. At each rebalancing period, the latest technical data is used to recalculate indicator scores and update the portfolio positions.
 
-#### 3. Technical Indicator Scoring System
 
-Each stock is scored (0–5 per indicator) for both long and short setups based on:
 
-##### 3.1 EMA Deviation (Delta) Calculation
+
+#### 3. Adjustment Method
+Monthly portfolio adjustment + take-profit and stop-loss (Each stock is closed when it meets the take-profit and stop-loss conditions before the next portfolio adjustment to obtain cash and earn a risk-free interest rate)
+
+### Scoring System
+#### 1. Technical Indicator Scoring System
+
+Each stock is scored for both long and short setups based on:
+
+##### 1.1 EMA Deviation (Delta) Calculation
 
 The **EMA deviation** measures how far the current price is from its 20-day Exponential Moving Average (EMA). It is calculated as:
+`Δ = 100% × (Close − EMA₍₂₀₎) / EMA₍₂₀₎`
+```{python}
+#| echo: false
+import pandas as pd
 
-Δ = 100% * (Close - EMA_20) / EMA_20
+df_ema = pd.DataFrame({
+    "Δ Range": [
+        "> +5%",
+        "+3% – +5%",
+        "+1% – +3%",
+        "0 – +1%",
+        "< 0%",
+        "< –5%",
+        "–5% – –3%",
+        "–3% – –1%",
+        "–1% – 0%",
+        "> 0%"
+    ],
+    "Short Score": [5, 4, 3, 2, 0, "-", "-", "-", "-", "-"],
+    "Long Score": ["-", "-", "-", "-", "-", 5, 4, 3, 2, 0]
+})
 
-- **Long Scores (price above EMA):**
-  - Δ > +5%: **5 points**
-  - Δ between +3% and +5%: **4 points**
-  - Δ between +1% and +3%: **3 points**
-  - Δ between 0% and +1%: **2 points**
-  - Otherwise: **0 points**
-- **Short Scores (price below EMA):**
-  - Δ < –5%: **5 points**
-  - Δ between –5% and –3%: **4 points**
-  - Δ between –3% and –1%: **3 points**
-  - Δ between –1% and 0%: **2 points**
-  - Otherwise: **0 points**
+df_ema.index = df_ema.index + 1
+df_ema
 
-##### 3.2 MACD (Moving Average Convergence Divergence)
-- **Calculation:** MACD difference = (MACD line – Signal line)
-- **Long Scores:**
-  - MACD_diff ≥ +1.5: **5 points**
-  - MACD_diff in [1.0, 1.5): **4 points**
-  - MACD_diff in [0.5, 1.0): **3 points**
-  - MACD_diff in [0.1, 0.5): **2 points**
-  - Otherwise: **0 points**
-- **Short Scores:**
-  - MACD_diff ≤ –1.5: **5 points**
-  - MACD_diff in (–1.5, –1.0]: **4 points**
-  - MACD_diff in (–1.0, –0.5]: **3 points**
-  - MACD_diff in (–0.5, –0.1]: **2 points**
-  - Otherwise: **0 points**
+```
 
-##### 3.3 ADX (Average Directional Index)
-- **Common for both directions:**
-  - ADX ≥ 40: **5 points**
-  - ADX between 30 and 40: **4 points**
-  - ADX between 25 and 30: **3 points**
-  - ADX between 20 and 25: **2 points**
-  - ADX < 20: **0 points**
+##### 1.2 MACD (Moving Average Convergence Divergence)
+The **MACD difference** is calculated as:
+`MACD difference = MACD line – Signal line`
 
-##### 3.4 ATR (Average True Range)
-- **Calculation:** Use the ratio of the current ATR to the 20-day ATR average.
-- **Common for both directions:**
-  - ATR Ratio between 0.8 and 1.2: **5 points**
-  - ATR Ratio between 0.6–0.8 or 1.2–1.5: **4 points**
-  - ATR Ratio between 0.4–0.6 or 1.5–1.8: **3 points**
-  - ATR Ratio between 0.2–0.4 or 1.8–2.0: **2 points**
-  - ATR Ratio < 0.2 or > 2.0: **0 points**
+```{python}
+#| echo: false
+import pandas as pd
 
-#### 4. Determining Trade Direction & Weight Allocation
+df_macd = pd.DataFrame({
+    "MACD_diff Range": [
+        "> +1.5",
+        "+1.0 – +1.5",
+        "+0.5 – +1.0",
+        "+0.1 – +0.5",
+        "0 – +0.1",
+        "≤ 0",
+        "< –1.5",
+        "–1.5 – –1.0",
+        "–1.0 – –0.5",
+        "–0.5 – –0.1",
+        "–0.1 – 0",
+        "≥ 0"
+    ],
+    "Short Score": [5, 4, 3, 2, 1, 0, "-", "-", "-", "-", "-", "-"],
+    "Long Score": ["-", "-", "-", "-", "-", "-", 5, 4, 3, 2, 1, 0]
+})
 
-For each stock:<br>
-<br>
-   **Total_Long** = EMA_long + MACD_long + ADX_score + ATR_score<br>
-   **Total_Short** = EMA_short + MACD_short + ADX_score + ATR_score<br>
+df_macd.index = df_macd.index + 1
+df_macd
+```
 
-The direction is chosen by comparing the two totals. The absolute total score is then normalized among stocks in that category (long or short) to determine the weight. Long positions have positive weights while short positions have negative weights.
+##### 1.3 ADX (Average Directional Index)
+The reversal strategy is suitable for operation in a moderately trending market; neither too strong nor too weak is appropriate.
+
+```{python}
+#| echo: false
+import pandas as pd
+
+df_adx = pd.DataFrame({
+    "ADX Value Range": [
+        "0–15",
+        "15–20",
+        "20–30",
+        "30–40",
+        "> 40"
+    ],
+    "Explanation": [
+        "Very weak trend, sideways market",
+        "Weak trend, reversal possible",
+        "Moderate trend, ideal for reversal",
+        "Strong trend, caution",
+        "Very strong trend, high risk"
+    ],
+    "Score (Both Directions)": [0, 2, 5, 2, 0]
+})
+
+df_adx.index = df_adx.index + 1
+df_adx
+```
+
+##### 1.4 ATR (Average True Range)
+The **ATR ratio** measures **relative volatility** by comparing the current ATR to its 20-day average:
+`ATR Ratio = Current ATR / 20-day ATR Average`
+```{python}
+#| echo: false
+import pandas as pd
+
+df_atr = pd.DataFrame({
+    "ATR Value Range": [
+        "> 30",
+        "20 – 30",
+        "10 – 20",
+        "5 – 10",
+        "< 5"
+    ],
+    "Explanation": [
+        "Extremely high volatility, avoid trading",
+        "High volatility, elevated risk",
+        "Ideal volatility level",
+        "Moderate-low volatility, acceptable",
+        "Very low volatility, may stall"
+    ],
+    "Score (Both Directions)": [0, 2, 5, 4, 2]
+})
+
+df_atr.index = df_atr.index + 1
+df_atr
+
+```
+
+#### 2. Non-Technical Indicator Scoring System
+##### 2.1 Implied volatility
+Options-implied volatility (IV) reflects **market expectations of future price fluctuations**.
+
+- **Low IV**: The market is calm with low volatility, often followed by upward price corrections — favorable for **long** positions.
+- **High IV**: The market is fearful with large swings, making it prone to overreactions — favorable for **short** positions in anticipation of reversals or bubbles bursting.
+
+```{python}
+#| echo: false
+import pandas as pd
+
+df_iv = pd.DataFrame({
+    "IV Percentile Range": [
+        "< 10%",
+        "10% – 30%",
+        "30% – 70%",
+        "70% – 90%",
+        "> 90%"
+    ],
+    "Long Score": [5, 4, 2, 1, 0],
+    "Short Score": [0, 1, 2, 4, 5],
+    "Explanation": [
+        "Extremely calm, likely to rebound, long favorable",
+        "Relatively calm, supports long",
+        "Neutral volatility, direction uncertain",
+        "Mild panic, possible short-term drop",
+        "Extreme panic, suitable for shorting"
+    ]
+})
+
+df_iv.index = df_iv.index + 1
+df_iv
+```
 
 
-#### 5. Risk Management Rules
-- Individual stock weight is capped at **20% (absolute value)**.<br>
-- Overall short exposure is limited to **40%** of the portfolio.<br>
-- **Stop-Loss:** Exit a position if it falls more than 10% from the entry price.<br>
-- **Take-Profit:** Close a position if it gains more than 20% from the entry price.<br>
+##### 2.2 10-2 Yield Spread
+The **10-year minus 2-year Treasury yield spread (10–2 spread)** reflects the market’s outlook on long-term vs. short-term economic expectations.
 
+- **Normal (spread > 0%)**: Indicates a healthy, growing economy; supports **long** positions and mean-reversion strategies.
+- **Inverted (spread < 0%)**: Often seen as a sign of recession or heightened risk; favors **short** positions to hedge against economic downturns.
+
+```{python}
+#| echo: false
+import pandas as pd
+
+df_yield = pd.DataFrame({
+    "10–2 Spread Range (%)": [
+        "> 1.5",
+        "0.5 – 1.5",
+        "–0.5 – 0.5",
+        "–1.5 – –0.5",
+        "< –1.5"
+    ],
+    "Long Score": [5, 4, 2, 1, 0],
+    "Short Score": [0, 1, 2, 4, 5],
+    "Explanation": [
+        "Large spread, optimistic economy, strong reversal signals",
+        "Mild steepness, supports long positions",
+        "Neutral curve, unclear direction",
+        "Significant inversion, growing concern",
+        "Severe inversion, market panic, short-favoring conditions"
+    ]
+})
+
+df_yield.index = df_yield.index + 1
+df_yield
+```
+
+
+#### 3. Determining Trade Direction & Weight Allocation
+
+For each stock, we compute both long and short scores:
+
+- **Total_Long** = EMA_long + MACD_long + ADX + ATR
+- **Total_Short** = EMA_short + MACD_short + ADX + ATR
+
+We compare the two totals and select the side with the higher score as the **trading direction** (long or short).
+
+Once the direction is determined for each stock, we normalize scores within each group to allocate weights:
+
+- **Weight Calculation**:
+  For each stock in the selected group (long or short):
+  `weight_i = score_i / sum(scores in group)`
+
+- **Position Sign**:
+  - Long positions receive **positive weights**
+  - Short positions receive **negative weights**
+
+- **Weight Meaning**:
+  The final weight represents **capital allocation ratio** in the portfolio, subject to risk constraints.
+
+
+### Strategy Outcome
+The strategy produces a **blotter** and **ledger** to record all trade signals and executed positions based on the computed indicator scores.
+
+Below is a placeholder for the interactive portfolio visualization.
+It will display results such as:
+
+- Capital allocation weights (long/short)
+- Historical position tracking
+- Cumulative return curve
+
+
+
+#### **Blotter**
+
+<h4>🔍 Search by Date:</h4>
+<input type="text" id="blotter-search" placeholder="e.g., 2025-04-15" style="padding: 5px; margin-bottom: 10px; width: 200px;" />
+
+<div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
+```{python}
+#| echo: false
+import pandas as pd
+
+blotter = pd.read_csv("static/blotter.csv")
+html_blotter = blotter.to_html(index=False, table_id="blotter-table", classes="table table-striped")
+from IPython.display import display, HTML
+display(HTML(html_blotter))
+```
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("blotter-search");
+  input.addEventListener("keyup", function () {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("#blotter-table tbody tr");
+    rows.forEach(row => {
+      const dateCell = row.cells[0]?.textContent?.toLowerCase() || "";
+      if (dateCell.includes(filter)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
+});
+</script>
+
+
+#### **Ledger**
+
+<h4>🔍 Search Ledger by Date:</h4>
+<input type="text" id="ledger-search" placeholder="e.g., 2025-04-15" style="padding: 5px; margin-bottom: 10px; width: 200px;" />
+
+<div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
+```{python}
+#| echo: false
+import pandas as pd
+from IPython.display import display, HTML
+
+ledger = pd.read_csv("static/ledger.csv")
+
+# 输出 HTML 表格，绑定 table ID
+html_ledger = ledger.to_html(index=False, table_id="ledger-table", classes="table table-striped")
+display(HTML(html_ledger))
+```
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("ledger-search");
+  input.addEventListener("keyup", function () {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("#ledger-table tbody tr");
+    rows.forEach(row => {
+      const dateCell = row.cells[0]?.textContent?.toLowerCase() || "";
+      if (dateCell.includes(filter)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
+});
+</script>

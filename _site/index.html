@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Xiaoya Dong, Yingxue Wang, Yueqi He">
-<meta name="dcterms.date" content="2025-04-09">
+<meta name="dcterms.date" content="2025-04-21">
 
 <title>AlphaSignal533 – alphasignal533</title>
 <style>
@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -40,7 +40,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b0f5314db437f1ce6b90d384b591f1af.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ace74d340a4791061218a60df7c0f5e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,6 +68,11 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="static/price_data.js"></script>
 
 
 <link rel="stylesheet" href="styles.css">
@@ -121,7 +126,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#longshort-trend-strategy" id="toc-longshort-trend-strategy" class="nav-link active" data-scroll-target="#longshort-trend-strategy">Long–Short Trend Strategy</a></li>
+  <li><a href="#mean-reversion-strategy" id="toc-mean-reversion-strategy" class="nav-link active" data-scroll-target="#mean-reversion-strategy">Mean Reversion Strategy</a></li>
+  <li><a href="#view-last-months-stock-price" id="toc-view-last-months-stock-price" class="nav-link" data-scroll-target="#view-last-months-stock-price">📊View Last Month’s Stock Price</a></li>
+  <li><a href="#scoring-system" id="toc-scoring-system" class="nav-link" data-scroll-target="#scoring-system">Scoring System</a></li>
+  <li><a href="#strategy-outcome" id="toc-strategy-outcome" class="nav-link" data-scroll-target="#strategy-outcome">Strategy Outcome</a></li>
   </ul>
 </nav>
     </div>
@@ -147,7 +155,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 9, 2025</p>
+      <p class="date">April 21, 2025</p>
     </div>
   </div>
   
@@ -159,117 +167,1676 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="longshort-trend-strategy" class="level3">
-<h3 class="anchored" data-anchor-id="longshort-trend-strategy">Long–Short Trend Strategy</h3>
-<section id="portfolio-universe" class="level4">
-<h4 class="anchored" data-anchor-id="portfolio-universe">1. Portfolio Universe</h4>
+<section id="mean-reversion-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="mean-reversion-strategy">Mean Reversion Strategy</h3>
+<section id="strategy-overview" class="level4">
+<h4 class="anchored" data-anchor-id="strategy-overview">1. Strategy Overview</h4>
+<p>Mean reversion: Since the stocks in the portfolio all come from representative large companies and have high liquidity. The prices of these stocks usually do not fluctuate sharply. Therefore, we formulate the mean reversion strategy, expecting the stock price to pull back when the stock price is high and short selling. When the stock price is low, it is expected to rebound.</p>
+</section>
+<section id="portfolio-choice" class="level4">
+<h4 class="anchored" data-anchor-id="portfolio-choice">2. Portfolio Choice</h4>
 <p>We selected these 10 stocks for their strong <strong>sector representation</strong>, <strong>high liquidity</strong>, and <strong>market relevance</strong>. Each stock comes from a different major industry, ensuring diversification and reducing sector-specific risk. As large-cap, actively traded companies, they offer reliable data and efficient execution,.</p>
-<ul>
-<li><strong>AAPL</strong> – Information Electronics</li>
-<li><strong>MSFT</strong> – Information Technology</li>
-<li><strong>JPM</strong> – Financial</li>
-<li><strong>XOM</strong> – Energy</li>
-<li><strong>JNJ</strong> – Healthcare</li>
-<li><strong>PG</strong> – Consumer Staples</li>
-<li><strong>NVDA</strong> – Semiconductors</li>
-<li><strong>CAT</strong> – Industrial</li>
-<li><strong>HD</strong> – Retail</li>
-<li><strong>AMZN</strong> – Communication Services</li>
-</ul>
+<div id="3c7caae7" class="cell" data-dataframe-index-label="No." data-dataframe-show-index="true" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Ticker</th>
+<th data-quarto-table-cell-role="th">Industry</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>AAPL</td>
+<td>Information Electronics</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>MSFT</td>
+<td>Information Technology</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>JPM</td>
+<td>Financial</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>XOM</td>
+<td>Energy</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>JNJ</td>
+<td>Healthcare</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6</td>
+<td>PG</td>
+<td>Consumer Staples</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">7</td>
+<td>NVDA</td>
+<td>Semiconductors</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">8</td>
+<td>CAT</td>
+<td>Industrial</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">9</td>
+<td>HD</td>
+<td>Retail</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10</td>
+<td>AMZN</td>
+<td>Communication Services</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </section>
-<section id="rebalancing-frequency" class="level4">
-<h4 class="anchored" data-anchor-id="rebalancing-frequency">2. Rebalancing Frequency</h4>
-<p>The portfolio is rebalanced monthly. At each rebalancing period, the latest technical data is used to recalculate indicator scores and update the portfolio positions.</p>
 </section>
+<section id="view-last-months-stock-price" class="level3">
+<h3 class="anchored" data-anchor-id="view-last-months-stock-price">📊View Last Month’s Stock Price</h3>
+<h4 class="anchored">
+🔽 Choose a Stock:
+</h4>
+<p><select id="stock-selector"> <option value="AAPL">AAPL</option> <option value="MSFT">MSFT</option> <option value="JPM">JPM</option> <option value="XOM">XOM</option> <option value="JNJ">JNJ</option> <option value="PG">PG</option> <option value="NVDA">NVDA</option> <option value="CAT">CAT</option> <option value="HD">HD</option> <option value="AMZN">AMZN</option> </select></p>
+<div id="plotly-container" style="height: 500px;">
+
+</div>
+<script>
+function plotStock(ticker) {
+  const data = priceData[ticker];
+  if (!data || data.length === 0) {
+    document.getElementById('plotly-container').innerHTML = "<p>No data available for " + ticker + ".</p>";
+    return;
+  }
+
+  const trace = {
+    x: data.map(d => d.Date),
+    y: data.map(d => d.Close),
+    mode: 'lines+markers',
+    name: ticker,
+    line: { color: '#1f77b4' }
+  };
+  const layout = {
+    title: `${ticker} - Last Month Closing Prices`,
+    xaxis: { title: 'Date' },
+    yaxis: { title: 'Price (USD)' }
+  };
+  Plotly.newPlot('plotly-container', [trace], layout);
+}
+
+window.addEventListener("load", function () {
+  plotStock("AAPL");
+
+  document.getElementById("stock-selector").addEventListener("change", function () {
+    plotStock(this.value);
+  });
+});
+</script>
+<section id="adjustment-method" class="level4">
+<h4 class="anchored" data-anchor-id="adjustment-method">3. Adjustment Method</h4>
+<p>Monthly portfolio adjustment + take-profit and stop-loss (Each stock is closed when it meets the take-profit and stop-loss conditions before the next portfolio adjustment to obtain cash and earn a risk-free interest rate)</p>
+</section>
+</section>
+<section id="scoring-system" class="level3">
+<h3 class="anchored" data-anchor-id="scoring-system">Scoring System</h3>
 <section id="technical-indicator-scoring-system" class="level4">
-<h4 class="anchored" data-anchor-id="technical-indicator-scoring-system">3. Technical Indicator Scoring System</h4>
-<p>Each stock is scored (0–5 per indicator) for both long and short setups based on:</p>
+<h4 class="anchored" data-anchor-id="technical-indicator-scoring-system">1. Technical Indicator Scoring System</h4>
+<p>Each stock is scored for both long and short setups based on:</p>
 <section id="ema-deviation-delta-calculation" class="level5">
-<h5 class="anchored" data-anchor-id="ema-deviation-delta-calculation">3.1 EMA Deviation (Delta) Calculation</h5>
-<p>The <strong>EMA deviation</strong> measures how far the current price is from its 20-day Exponential Moving Average (EMA). It is calculated as:</p>
-<p>Δ = 100% * (Close - EMA_20) / EMA_20</p>
-<ul>
-<li><strong>Long Scores (price above EMA):</strong>
-<ul>
-<li>Δ &gt; +5%: <strong>5 points</strong></li>
-<li>Δ between +3% and +5%: <strong>4 points</strong></li>
-<li>Δ between +1% and +3%: <strong>3 points</strong></li>
-<li>Δ between 0% and +1%: <strong>2 points</strong></li>
-<li>Otherwise: <strong>0 points</strong></li>
-</ul></li>
-<li><strong>Short Scores (price below EMA):</strong>
-<ul>
-<li>Δ &lt; –5%: <strong>5 points</strong></li>
-<li>Δ between –5% and –3%: <strong>4 points</strong></li>
-<li>Δ between –3% and –1%: <strong>3 points</strong></li>
-<li>Δ between –1% and 0%: <strong>2 points</strong></li>
-<li>Otherwise: <strong>0 points</strong></li>
-</ul></li>
-</ul>
+<h5 class="anchored" data-anchor-id="ema-deviation-delta-calculation">1.1 EMA Deviation (Delta) Calculation</h5>
+<p>The <strong>EMA deviation</strong> measures how far the current price is from its 20-day Exponential Moving Average (EMA). It is calculated as: <code>Δ = 100% × (Close − EMA₍₂₀₎) / EMA₍₂₀₎</code></p>
+<div id="98d8f803" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Δ Range</th>
+<th data-quarto-table-cell-role="th">Short Score</th>
+<th data-quarto-table-cell-role="th">Long Score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>&gt; +5%</td>
+<td>5</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>+3% – +5%</td>
+<td>4</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>+1% – +3%</td>
+<td>3</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>0 – +1%</td>
+<td>2</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>&lt; 0%</td>
+<td>0</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6</td>
+<td>&lt; –5%</td>
+<td>-</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">7</td>
+<td>–5% – –3%</td>
+<td>-</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">8</td>
+<td>–3% – –1%</td>
+<td>-</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">9</td>
+<td>–1% – 0%</td>
+<td>-</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10</td>
+<td>&gt; 0%</td>
+<td>-</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </section>
 <section id="macd-moving-average-convergence-divergence" class="level5">
-<h5 class="anchored" data-anchor-id="macd-moving-average-convergence-divergence">3.2 MACD (Moving Average Convergence Divergence)</h5>
-<ul>
-<li><strong>Calculation:</strong> MACD difference = (MACD line – Signal line)</li>
-<li><strong>Long Scores:</strong>
-<ul>
-<li>MACD_diff ≥ +1.5: <strong>5 points</strong></li>
-<li>MACD_diff in [1.0, 1.5): <strong>4 points</strong></li>
-<li>MACD_diff in [0.5, 1.0): <strong>3 points</strong></li>
-<li>MACD_diff in [0.1, 0.5): <strong>2 points</strong></li>
-<li>Otherwise: <strong>0 points</strong></li>
-</ul></li>
-<li><strong>Short Scores:</strong>
-<ul>
-<li>MACD_diff ≤ –1.5: <strong>5 points</strong></li>
-<li>MACD_diff in (–1.5, –1.0]: <strong>4 points</strong></li>
-<li>MACD_diff in (–1.0, –0.5]: <strong>3 points</strong></li>
-<li>MACD_diff in (–0.5, –0.1]: <strong>2 points</strong></li>
-<li>Otherwise: <strong>0 points</strong></li>
-</ul></li>
-</ul>
+<h5 class="anchored" data-anchor-id="macd-moving-average-convergence-divergence">1.2 MACD (Moving Average Convergence Divergence)</h5>
+<p>The <strong>MACD difference</strong> is calculated as: <code>MACD difference = MACD line – Signal line</code></p>
+<div id="c01ed9fd" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">MACD_diff Range</th>
+<th data-quarto-table-cell-role="th">Short Score</th>
+<th data-quarto-table-cell-role="th">Long Score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>&gt; +1.5</td>
+<td>5</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>+1.0 – +1.5</td>
+<td>4</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>+0.5 – +1.0</td>
+<td>3</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>+0.1 – +0.5</td>
+<td>2</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>0 – +0.1</td>
+<td>1</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6</td>
+<td>≤ 0</td>
+<td>0</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">7</td>
+<td>&lt; –1.5</td>
+<td>-</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">8</td>
+<td>–1.5 – –1.0</td>
+<td>-</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">9</td>
+<td>–1.0 – –0.5</td>
+<td>-</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10</td>
+<td>–0.5 – –0.1</td>
+<td>-</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">11</td>
+<td>–0.1 – 0</td>
+<td>-</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">12</td>
+<td>≥ 0</td>
+<td>-</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </section>
 <section id="adx-average-directional-index" class="level5">
-<h5 class="anchored" data-anchor-id="adx-average-directional-index">3.3 ADX (Average Directional Index)</h5>
-<ul>
-<li><strong>Common for both directions:</strong>
-<ul>
-<li>ADX ≥ 40: <strong>5 points</strong></li>
-<li>ADX between 30 and 40: <strong>4 points</strong></li>
-<li>ADX between 25 and 30: <strong>3 points</strong></li>
-<li>ADX between 20 and 25: <strong>2 points</strong></li>
-<li>ADX &lt; 20: <strong>0 points</strong></li>
-</ul></li>
-</ul>
+<h5 class="anchored" data-anchor-id="adx-average-directional-index">1.3 ADX (Average Directional Index)</h5>
+<p>The reversal strategy is suitable for operation in a moderately trending market; neither too strong nor too weak is appropriate.</p>
+<div id="a5d9dec3" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ADX Value Range</th>
+<th data-quarto-table-cell-role="th">Explanation</th>
+<th data-quarto-table-cell-role="th">Score (Both Directions)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>0–15</td>
+<td>Very weak trend, sideways market</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>15–20</td>
+<td>Weak trend, reversal possible</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>20–30</td>
+<td>Moderate trend, ideal for reversal</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>30–40</td>
+<td>Strong trend, caution</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>&gt; 40</td>
+<td>Very strong trend, high risk</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </section>
 <section id="atr-average-true-range" class="level5">
-<h5 class="anchored" data-anchor-id="atr-average-true-range">3.4 ATR (Average True Range)</h5>
+<h5 class="anchored" data-anchor-id="atr-average-true-range">1.4 ATR (Average True Range)</h5>
+<p>The <strong>ATR ratio</strong> measures <strong>relative volatility</strong> by comparing the current ATR to its 20-day average: <code>ATR Ratio = Current ATR / 20-day ATR Average</code></p>
+<div id="98c62748" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ATR Value Range</th>
+<th data-quarto-table-cell-role="th">Explanation</th>
+<th data-quarto-table-cell-role="th">Score (Both Directions)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>&gt; 30</td>
+<td>Extremely high volatility, avoid trading</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>20 – 30</td>
+<td>High volatility, elevated risk</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>10 – 20</td>
+<td>Ideal volatility level</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>5 – 10</td>
+<td>Moderate-low volatility, acceptable</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>&lt; 5</td>
+<td>Very low volatility, may stall</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="non-technical-indicator-scoring-system" class="level4">
+<h4 class="anchored" data-anchor-id="non-technical-indicator-scoring-system">2. Non-Technical Indicator Scoring System</h4>
+<section id="implied-volatility" class="level5">
+<h5 class="anchored" data-anchor-id="implied-volatility">2.1 Implied volatility</h5>
+<p>Options-implied volatility (IV) reflects <strong>market expectations of future price fluctuations</strong>.</p>
 <ul>
-<li><strong>Calculation:</strong> Use the ratio of the current ATR to the 20-day ATR average.</li>
-<li><strong>Common for both directions:</strong>
-<ul>
-<li>ATR Ratio between 0.8 and 1.2: <strong>5 points</strong></li>
-<li>ATR Ratio between 0.6–0.8 or 1.2–1.5: <strong>4 points</strong></li>
-<li>ATR Ratio between 0.4–0.6 or 1.5–1.8: <strong>3 points</strong></li>
-<li>ATR Ratio between 0.2–0.4 or 1.8–2.0: <strong>2 points</strong></li>
-<li>ATR Ratio &lt; 0.2 or &gt; 2.0: <strong>0 points</strong></li>
-</ul></li>
+<li><strong>Low IV</strong>: The market is calm with low volatility, often followed by upward price corrections — favorable for <strong>long</strong> positions.</li>
+<li><strong>High IV</strong>: The market is fearful with large swings, making it prone to overreactions — favorable for <strong>short</strong> positions in anticipation of reversals or bubbles bursting.</li>
 </ul>
+<div id="baeff133" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">IV Percentile Range</th>
+<th data-quarto-table-cell-role="th">Long Score</th>
+<th data-quarto-table-cell-role="th">Short Score</th>
+<th data-quarto-table-cell-role="th">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>&lt; 10%</td>
+<td>5</td>
+<td>0</td>
+<td>Extremely calm, likely to rebound, long favorable</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>10% – 30%</td>
+<td>4</td>
+<td>1</td>
+<td>Relatively calm, supports long</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>30% – 70%</td>
+<td>2</td>
+<td>2</td>
+<td>Neutral volatility, direction uncertain</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>70% – 90%</td>
+<td>1</td>
+<td>4</td>
+<td>Mild panic, possible short-term drop</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>&gt; 90%</td>
+<td>0</td>
+<td>5</td>
+<td>Extreme panic, suitable for shorting</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="yield-spread" class="level5">
+<h5 class="anchored" data-anchor-id="yield-spread">2.2 10-2 Yield Spread</h5>
+<p>The <strong>10-year minus 2-year Treasury yield spread (10–2 spread)</strong> reflects the market’s outlook on long-term vs.&nbsp;short-term economic expectations.</p>
+<ul>
+<li><strong>Normal (spread &gt; 0%)</strong>: Indicates a healthy, growing economy; supports <strong>long</strong> positions and mean-reversion strategies.</li>
+<li><strong>Inverted (spread &lt; 0%)</strong>: Often seen as a sign of recession or heightened risk; favors <strong>short</strong> positions to hedge against economic downturns.</li>
+</ul>
+<div id="243ff5e4" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">10–2 Spread Range (%)</th>
+<th data-quarto-table-cell-role="th">Long Score</th>
+<th data-quarto-table-cell-role="th">Short Score</th>
+<th data-quarto-table-cell-role="th">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>&gt; 1.5</td>
+<td>5</td>
+<td>0</td>
+<td>Large spread, optimistic economy, strong rever...</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>0.5 – 1.5</td>
+<td>4</td>
+<td>1</td>
+<td>Mild steepness, supports long positions</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>–0.5 – 0.5</td>
+<td>2</td>
+<td>2</td>
+<td>Neutral curve, unclear direction</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>–1.5 – –0.5</td>
+<td>1</td>
+<td>4</td>
+<td>Significant inversion, growing concern</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>&lt; –1.5</td>
+<td>0</td>
+<td>5</td>
+<td>Severe inversion, market panic, short-favoring...</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="determining-trade-direction-weight-allocation" class="level4">
-<h4 class="anchored" data-anchor-id="determining-trade-direction-weight-allocation">4. Determining Trade Direction &amp; Weight Allocation</h4>
-<p>For each stock:<br> <br> <strong>Total_Long</strong> = EMA_long + MACD_long + ADX_score + ATR_score<br> <strong>Total_Short</strong> = EMA_short + MACD_short + ADX_score + ATR_score<br></p>
-<p>The direction is chosen by comparing the two totals. The absolute total score is then normalized among stocks in that category (long or short) to determine the weight. Long positions have positive weights while short positions have negative weights.</p>
-</section>
-<section id="risk-management-rules" class="level4">
-<h4 class="anchored" data-anchor-id="risk-management-rules">5. Risk Management Rules</h4>
+<h4 class="anchored" data-anchor-id="determining-trade-direction-weight-allocation">3. Determining Trade Direction &amp; Weight Allocation</h4>
+<p>For each stock, we compute both long and short scores:</p>
 <ul>
-<li>Individual stock weight is capped at <strong>20% (absolute value)</strong>.<br></li>
-<li>Overall short exposure is limited to <strong>40%</strong> of the portfolio.<br></li>
-<li><strong>Stop-Loss:</strong> Exit a position if it falls more than 10% from the entry price.<br></li>
-<li><strong>Take-Profit:</strong> Close a position if it gains more than 20% from the entry price.<br></li>
+<li><strong>Total_Long</strong> = EMA_long + MACD_long + ADX + ATR</li>
+<li><strong>Total_Short</strong> = EMA_short + MACD_short + ADX + ATR</li>
 </ul>
+<p>We compare the two totals and select the side with the higher score as the <strong>trading direction</strong> (long or short).</p>
+<p>Once the direction is determined for each stock, we normalize scores within each group to allocate weights:</p>
+<ul>
+<li><p><strong>Weight Calculation</strong>: For each stock in the selected group (long or short): <code>weight_i = score_i / sum(scores in group)</code></p></li>
+<li><p><strong>Position Sign</strong>:</p>
+<ul>
+<li>Long positions receive <strong>positive weights</strong></li>
+<li>Short positions receive <strong>negative weights</strong></li>
+</ul></li>
+<li><p><strong>Weight Meaning</strong>: The final weight represents <strong>capital allocation ratio</strong> in the portfolio, subject to risk constraints.</p></li>
+</ul>
+</section>
+</section>
+<section id="strategy-outcome" class="level3">
+<h3 class="anchored" data-anchor-id="strategy-outcome">Strategy Outcome</h3>
+<p>The strategy produces a <strong>blotter</strong> and <strong>ledger</strong> to record all trade signals and executed positions based on the computed indicator scores.</p>
+<p>Below is a placeholder for the interactive portfolio visualization. It will display results such as:</p>
+<ul>
+<li>Capital allocation weights (long/short)</li>
+<li>Historical position tracking</li>
+<li>Cumulative return curve</li>
+</ul>
+<section id="blotter" class="level4">
+<h4 class="anchored" data-anchor-id="blotter"><strong>Blotter</strong></h4>
+<h4 class="anchored">
+🔍 Search by Date:
+</h4>
+<p><input type="text" id="blotter-search" placeholder="e.g., 2025-04-15" style="padding: 5px; margin-bottom: 10px; width: 200px;"></p>
+<div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
+<div id="5d10a3c5" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<table id="blotter-table" class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">entry_timestamp</th>
+<th data-quarto-table-cell-role="th">qty</th>
+<th data-quarto-table-cell-role="th">exit_timestamp</th>
+<th data-quarto-table-cell-role="th">entry_price</th>
+<th data-quarto-table-cell-role="th">exit_price</th>
+<th data-quarto-table-cell-role="th">success</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2024-11-04 09:30:00</td>
+<td>100</td>
+<td>2024-11-07 09:30:00</td>
+<td>563.71</td>
+<td>583.033277</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<td>2024-11-11 09:30:00</td>
+<td>100</td>
+<td>2024-11-15 15:00:00</td>
+<td>586.36</td>
+<td>554.080000</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td>2024-11-18 09:30:00</td>
+<td>-100</td>
+<td>2024-11-22 15:00:00</td>
+<td>557.04</td>
+<td>559.140000</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td>2024-11-25 09:30:00</td>
+<td>-100</td>
+<td>2024-11-29 12:00:00</td>
+<td>562.50</td>
+<td>574.320000</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td>2024-12-02 09:30:00</td>
+<td>-100</td>
+<td>2024-12-06 15:00:00</td>
+<td>577.54</td>
+<td>623.770000</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td>2024-12-09 09:30:00</td>
+<td>-100</td>
+<td>2024-12-09 11:00:00</td>
+<td>623.93</td>
+<td>607.572609</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<td>2024-12-16 09:30:00</td>
+<td>-100</td>
+<td>2024-12-18 15:00:00</td>
+<td>630.05</td>
+<td>604.160024</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<td>2024-12-23 09:30:00</td>
+<td>-100</td>
+<td>2024-12-27 15:00:00</td>
+<td>589.60</td>
+<td>599.810000</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td>2024-12-30 09:30:00</td>
+<td>100</td>
+<td>2025-01-02 10:00:00</td>
+<td>588.51</td>
+<td>604.748544</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<td>2025-01-06 09:30:00</td>
+<td>-100</td>
+<td>2025-01-10 15:00:00</td>
+<td>611.51</td>
+<td>615.860000</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td>2025-01-13 09:30:00</td>
+<td>100</td>
+<td>2025-01-17 15:00:00</td>
+<td>607.13</td>
+<td>612.770000</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td>2025-01-21 09:30:00</td>
+<td>-100</td>
+<td>2025-01-24 15:00:00</td>
+<td>618.15</td>
+<td>647.490000</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td>2025-01-27 09:30:00</td>
+<td>100</td>
+<td>2025-01-27 10:00:00</td>
+<td>626.64</td>
+<td>643.785896</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<td>2025-02-03 09:30:00</td>
+<td>100</td>
+<td>2025-02-07 09:30:00</td>
+<td>675.56</td>
+<td>722.951077</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<td>2025-02-10 09:30:00</td>
+<td>-100</td>
+<td>2025-02-14 15:00:00</td>
+<td>718.97</td>
+<td>736.670000</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td>2025-02-18 09:30:00</td>
+<td>100</td>
+<td>2025-02-21 15:00:00</td>
+<td>736.33</td>
+<td>683.550000</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td>2025-02-24 09:30:00</td>
+<td>-100</td>
+<td>2025-02-24 10:00:00</td>
+<td>686.09</td>
+<td>662.495202</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<td>2025-03-03 09:30:00</td>
+<td>-100</td>
+<td>2025-03-04 09:30:00</td>
+<td>673.68</td>
+<td>640.906310</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<td>2025-03-10 09:30:00</td>
+<td>100</td>
+<td>2025-03-14 15:00:00</td>
+<td>608.07</td>
+<td>607.600000</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td>2025-03-17 09:30:00</td>
+<td>-100</td>
+<td>2025-03-21 15:00:00</td>
+<td>607.72</td>
+<td>596.250000</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td>2025-03-24 09:30:00</td>
+<td>-100</td>
+<td>2025-03-28 14:00:00</td>
+<td>614.97</td>
+<td>578.565211</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<td>2025-03-31 09:30:00</td>
+<td>100</td>
+<td>2025-04-01 11:00:00</td>
+<td>563.50</td>
+<td>584.278581</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<td>2025-04-07 09:30:00</td>
+<td>100</td>
+<td>2025-04-07 10:00:00</td>
+<td>486.55</td>
+<td>530.602509</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<td>2025-04-14 09:30:00</td>
+<td>-100</td>
+<td>2025-04-17 15:00:00</td>
+<td>556.18</td>
+<td>501.480000</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td>2025-04-21 09:30:00</td>
+<td>100</td>
+<td>NaN</td>
+<td>491.33</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("blotter-search");
+  input.addEventListener("keyup", function () {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("#blotter-table tbody tr");
+    rows.forEach(row => {
+      const dateCell = row.cells[0]?.textContent?.toLowerCase() || "";
+      if (dateCell.includes(filter)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
+});
+</script>
+</section>
+<section id="ledger" class="level4">
+<h4 class="anchored" data-anchor-id="ledger"><strong>Ledger</strong></h4>
+<h4 class="anchored">
+🔍 Search Ledger by Date:
+</h4>
+<p><input type="text" id="ledger-search" placeholder="e.g., 2025-04-15" style="padding: 5px; margin-bottom: 10px; width: 200px;"></p>
+<div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
+<div id="33e0189d" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<table id="ledger-table" class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th">position</th>
+<th data-quarto-table-cell-role="th">cash</th>
+<th data-quarto-table-cell-role="th">mark</th>
+<th data-quarto-table-cell-role="th">mkt_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2024-11-04</td>
+<td>100</td>
+<td>-56371.00</td>
+<td>560.68</td>
+<td>-303.00</td>
+</tr>
+<tr class="even">
+<td>2024-11-05</td>
+<td>100</td>
+<td>-56371.00</td>
+<td>572.43</td>
+<td>872.00</td>
+</tr>
+<tr class="odd">
+<td>2024-11-06</td>
+<td>100</td>
+<td>-56371.00</td>
+<td>572.05</td>
+<td>834.00</td>
+</tr>
+<tr class="even">
+<td>2024-11-07</td>
+<td>0</td>
+<td>1932.33</td>
+<td>591.70</td>
+<td>1932.33</td>
+</tr>
+<tr class="odd">
+<td>2024-11-08</td>
+<td>0</td>
+<td>1932.33</td>
+<td>589.34</td>
+<td>1932.33</td>
+</tr>
+<tr class="even">
+<td>2024-11-11</td>
+<td>100</td>
+<td>-56703.67</td>
+<td>583.17</td>
+<td>1613.33</td>
+</tr>
+<tr class="odd">
+<td>2024-11-12</td>
+<td>100</td>
+<td>-56703.67</td>
+<td>584.82</td>
+<td>1778.33</td>
+</tr>
+<tr class="even">
+<td>2024-11-13</td>
+<td>100</td>
+<td>-56703.67</td>
+<td>580.00</td>
+<td>1296.33</td>
+</tr>
+<tr class="odd">
+<td>2024-11-14</td>
+<td>100</td>
+<td>-56703.67</td>
+<td>577.16</td>
+<td>1012.33</td>
+</tr>
+<tr class="even">
+<td>2024-11-15</td>
+<td>0</td>
+<td>-1295.67</td>
+<td>554.08</td>
+<td>-1295.67</td>
+</tr>
+<tr class="odd">
+<td>2024-11-18</td>
+<td>-100</td>
+<td>54408.33</td>
+<td>554.40</td>
+<td>-1031.67</td>
+</tr>
+<tr class="even">
+<td>2024-11-19</td>
+<td>-100</td>
+<td>54408.33</td>
+<td>561.09</td>
+<td>-1700.67</td>
+</tr>
+<tr class="odd">
+<td>2024-11-20</td>
+<td>-100</td>
+<td>54408.33</td>
+<td>565.52</td>
+<td>-2143.67</td>
+</tr>
+<tr class="even">
+<td>2024-11-21</td>
+<td>-100</td>
+<td>54408.33</td>
+<td>563.09</td>
+<td>-1900.67</td>
+</tr>
+<tr class="odd">
+<td>2024-11-22</td>
+<td>0</td>
+<td>-1505.67</td>
+<td>559.14</td>
+<td>-1505.67</td>
+</tr>
+<tr class="even">
+<td>2024-11-25</td>
+<td>-100</td>
+<td>54744.33</td>
+<td>565.11</td>
+<td>-1766.67</td>
+</tr>
+<tr class="odd">
+<td>2024-11-26</td>
+<td>-100</td>
+<td>54744.33</td>
+<td>573.54</td>
+<td>-2609.67</td>
+</tr>
+<tr class="even">
+<td>2024-11-27</td>
+<td>-100</td>
+<td>54744.33</td>
+<td>569.20</td>
+<td>-2175.67</td>
+</tr>
+<tr class="odd">
+<td>2024-11-29</td>
+<td>0</td>
+<td>-2687.67</td>
+<td>574.32</td>
+<td>-2687.67</td>
+</tr>
+<tr class="even">
+<td>2024-12-02</td>
+<td>-100</td>
+<td>55066.33</td>
+<td>592.83</td>
+<td>-4216.67</td>
+</tr>
+<tr class="odd">
+<td>2024-12-03</td>
+<td>-100</td>
+<td>55066.33</td>
+<td>613.65</td>
+<td>-6298.67</td>
+</tr>
+<tr class="even">
+<td>2024-12-04</td>
+<td>-100</td>
+<td>55066.33</td>
+<td>613.78</td>
+<td>-6311.67</td>
+</tr>
+<tr class="odd">
+<td>2024-12-05</td>
+<td>-100</td>
+<td>55066.33</td>
+<td>608.93</td>
+<td>-5826.67</td>
+</tr>
+<tr class="even">
+<td>2024-12-06</td>
+<td>0</td>
+<td>-7310.67</td>
+<td>623.77</td>
+<td>-7310.67</td>
+</tr>
+<tr class="odd">
+<td>2024-12-09</td>
+<td>0</td>
+<td>-5674.93</td>
+<td>613.57</td>
+<td>-5674.93</td>
+</tr>
+<tr class="even">
+<td>2024-12-10</td>
+<td>0</td>
+<td>-5674.93</td>
+<td>619.32</td>
+<td>-5674.93</td>
+</tr>
+<tr class="odd">
+<td>2024-12-11</td>
+<td>0</td>
+<td>-5674.93</td>
+<td>632.68</td>
+<td>-5674.93</td>
+</tr>
+<tr class="even">
+<td>2024-12-12</td>
+<td>0</td>
+<td>-5674.93</td>
+<td>630.79</td>
+<td>-5674.93</td>
+</tr>
+<tr class="odd">
+<td>2024-12-13</td>
+<td>0</td>
+<td>-5674.93</td>
+<td>620.35</td>
+<td>-5674.93</td>
+</tr>
+<tr class="even">
+<td>2024-12-16</td>
+<td>-100</td>
+<td>57330.07</td>
+<td>624.24</td>
+<td>-5093.93</td>
+</tr>
+<tr class="odd">
+<td>2024-12-17</td>
+<td>-100</td>
+<td>57330.07</td>
+<td>619.44</td>
+<td>-4613.93</td>
+</tr>
+<tr class="even">
+<td>2024-12-18</td>
+<td>0</td>
+<td>-3085.93</td>
+<td>597.19</td>
+<td>-3085.93</td>
+</tr>
+<tr class="odd">
+<td>2024-12-19</td>
+<td>0</td>
+<td>-3085.93</td>
+<td>595.57</td>
+<td>-3085.93</td>
+</tr>
+<tr class="even">
+<td>2024-12-20</td>
+<td>0</td>
+<td>-3085.93</td>
+<td>585.25</td>
+<td>-3085.93</td>
+</tr>
+<tr class="odd">
+<td>2024-12-23</td>
+<td>-100</td>
+<td>55874.07</td>
+<td>599.85</td>
+<td>-4110.93</td>
+</tr>
+<tr class="even">
+<td>2024-12-24</td>
+<td>-100</td>
+<td>55874.07</td>
+<td>607.75</td>
+<td>-4900.93</td>
+</tr>
+<tr class="odd">
+<td>2024-12-26</td>
+<td>-100</td>
+<td>55874.07</td>
+<td>603.35</td>
+<td>-4460.93</td>
+</tr>
+<tr class="even">
+<td>2024-12-27</td>
+<td>0</td>
+<td>-4106.93</td>
+<td>599.81</td>
+<td>-4106.93</td>
+</tr>
+<tr class="odd">
+<td>2024-12-30</td>
+<td>100</td>
+<td>-62957.93</td>
+<td>591.24</td>
+<td>-3833.93</td>
+</tr>
+<tr class="even">
+<td>2024-12-31</td>
+<td>100</td>
+<td>-62957.93</td>
+<td>585.51</td>
+<td>-4406.93</td>
+</tr>
+<tr class="odd">
+<td>2025-01-02</td>
+<td>0</td>
+<td>-2483.08</td>
+<td>599.24</td>
+<td>-2483.08</td>
+</tr>
+<tr class="even">
+<td>2025-01-03</td>
+<td>0</td>
+<td>-2483.08</td>
+<td>604.63</td>
+<td>-2483.08</td>
+</tr>
+<tr class="odd">
+<td>2025-01-06</td>
+<td>-100</td>
+<td>58667.92</td>
+<td>630.20</td>
+<td>-4352.08</td>
+</tr>
+<tr class="even">
+<td>2025-01-07</td>
+<td>-100</td>
+<td>58667.92</td>
+<td>617.89</td>
+<td>-3121.08</td>
+</tr>
+<tr class="odd">
+<td>2025-01-08</td>
+<td>-100</td>
+<td>58667.92</td>
+<td>610.72</td>
+<td>-2404.08</td>
+</tr>
+<tr class="even">
+<td>2025-01-10</td>
+<td>0</td>
+<td>-2918.08</td>
+<td>615.86</td>
+<td>-2918.08</td>
+</tr>
+<tr class="odd">
+<td>2025-01-13</td>
+<td>100</td>
+<td>-63631.08</td>
+<td>608.33</td>
+<td>-2798.08</td>
+</tr>
+<tr class="even">
+<td>2025-01-14</td>
+<td>100</td>
+<td>-63631.08</td>
+<td>594.25</td>
+<td>-4206.08</td>
+</tr>
+<tr class="odd">
+<td>2025-01-15</td>
+<td>100</td>
+<td>-63631.08</td>
+<td>617.12</td>
+<td>-1919.08</td>
+</tr>
+<tr class="even">
+<td>2025-01-16</td>
+<td>100</td>
+<td>-63631.08</td>
+<td>611.30</td>
+<td>-2501.08</td>
+</tr>
+<tr class="odd">
+<td>2025-01-17</td>
+<td>0</td>
+<td>-2354.08</td>
+<td>612.77</td>
+<td>-2354.08</td>
+</tr>
+<tr class="even">
+<td>2025-01-21</td>
+<td>-100</td>
+<td>59460.92</td>
+<td>616.46</td>
+<td>-2185.08</td>
+</tr>
+<tr class="odd">
+<td>2025-01-22</td>
+<td>-100</td>
+<td>59460.92</td>
+<td>623.50</td>
+<td>-2889.08</td>
+</tr>
+<tr class="even">
+<td>2025-01-23</td>
+<td>-100</td>
+<td>59460.92</td>
+<td>636.45</td>
+<td>-4184.08</td>
+</tr>
+<tr class="odd">
+<td>2025-01-24</td>
+<td>0</td>
+<td>-5288.08</td>
+<td>647.49</td>
+<td>-5288.08</td>
+</tr>
+<tr class="even">
+<td>2025-01-27</td>
+<td>0</td>
+<td>-3573.49</td>
+<td>659.88</td>
+<td>-3573.49</td>
+</tr>
+<tr class="odd">
+<td>2025-01-28</td>
+<td>0</td>
+<td>-3573.49</td>
+<td>674.33</td>
+<td>-3573.49</td>
+</tr>
+<tr class="even">
+<td>2025-01-29</td>
+<td>0</td>
+<td>-3573.49</td>
+<td>676.49</td>
+<td>-3573.49</td>
+</tr>
+<tr class="odd">
+<td>2025-01-30</td>
+<td>0</td>
+<td>-3573.49</td>
+<td>687.00</td>
+<td>-3573.49</td>
+</tr>
+<tr class="even">
+<td>2025-01-31</td>
+<td>0</td>
+<td>-3573.49</td>
+<td>689.18</td>
+<td>-3573.49</td>
+</tr>
+<tr class="odd">
+<td>2025-02-03</td>
+<td>100</td>
+<td>-71129.49</td>
+<td>697.46</td>
+<td>-1383.49</td>
+</tr>
+<tr class="even">
+<td>2025-02-04</td>
+<td>100</td>
+<td>-71129.49</td>
+<td>704.19</td>
+<td>-710.49</td>
+</tr>
+<tr class="odd">
+<td>2025-02-05</td>
+<td>100</td>
+<td>-71129.49</td>
+<td>704.87</td>
+<td>-642.49</td>
+</tr>
+<tr class="even">
+<td>2025-02-06</td>
+<td>100</td>
+<td>-71129.49</td>
+<td>711.99</td>
+<td>69.51</td>
+</tr>
+<tr class="odd">
+<td>2025-02-07</td>
+<td>0</td>
+<td>1165.62</td>
+<td>714.52</td>
+<td>1165.62</td>
+</tr>
+<tr class="even">
+<td>2025-02-10</td>
+<td>-100</td>
+<td>73062.62</td>
+<td>717.40</td>
+<td>1322.62</td>
+</tr>
+<tr class="odd">
+<td>2025-02-11</td>
+<td>-100</td>
+<td>73062.62</td>
+<td>719.80</td>
+<td>1082.62</td>
+</tr>
+<tr class="even">
+<td>2025-02-12</td>
+<td>-100</td>
+<td>73062.62</td>
+<td>725.38</td>
+<td>524.62</td>
+</tr>
+<tr class="odd">
+<td>2025-02-13</td>
+<td>-100</td>
+<td>73062.62</td>
+<td>728.56</td>
+<td>206.62</td>
+</tr>
+<tr class="even">
+<td>2025-02-14</td>
+<td>0</td>
+<td>-604.38</td>
+<td>736.67</td>
+<td>-604.38</td>
+</tr>
+<tr class="odd">
+<td>2025-02-18</td>
+<td>100</td>
+<td>-74237.38</td>
+<td>716.37</td>
+<td>-2600.38</td>
+</tr>
+<tr class="even">
+<td>2025-02-19</td>
+<td>100</td>
+<td>-74237.38</td>
+<td>703.77</td>
+<td>-3860.38</td>
+</tr>
+<tr class="odd">
+<td>2025-02-20</td>
+<td>100</td>
+<td>-74237.38</td>
+<td>694.84</td>
+<td>-4753.38</td>
+</tr>
+<tr class="even">
+<td>2025-02-21</td>
+<td>0</td>
+<td>-5882.38</td>
+<td>683.55</td>
+<td>-5882.38</td>
+</tr>
+<tr class="odd">
+<td>2025-02-24</td>
+<td>0</td>
+<td>-3522.90</td>
+<td>668.13</td>
+<td>-3522.90</td>
+</tr>
+<tr class="even">
+<td>2025-02-25</td>
+<td>0</td>
+<td>-3522.90</td>
+<td>657.50</td>
+<td>-3522.90</td>
+</tr>
+<tr class="odd">
+<td>2025-02-26</td>
+<td>0</td>
+<td>-3522.90</td>
+<td>673.70</td>
+<td>-3522.90</td>
+</tr>
+<tr class="even">
+<td>2025-02-27</td>
+<td>0</td>
+<td>-3522.90</td>
+<td>658.24</td>
+<td>-3522.90</td>
+</tr>
+<tr class="odd">
+<td>2025-02-28</td>
+<td>0</td>
+<td>-3522.90</td>
+<td>668.20</td>
+<td>-3522.90</td>
+</tr>
+<tr class="even">
+<td>2025-03-03</td>
+<td>-100</td>
+<td>63845.10</td>
+<td>655.05</td>
+<td>-1659.90</td>
+</tr>
+<tr class="odd">
+<td>2025-03-04</td>
+<td>0</td>
+<td>-245.53</td>
+<td>640.00</td>
+<td>-245.53</td>
+</tr>
+<tr class="even">
+<td>2025-03-05</td>
+<td>0</td>
+<td>-245.53</td>
+<td>656.47</td>
+<td>-245.53</td>
+</tr>
+<tr class="odd">
+<td>2025-03-06</td>
+<td>0</td>
+<td>-245.53</td>
+<td>627.93</td>
+<td>-245.53</td>
+</tr>
+<tr class="even">
+<td>2025-03-07</td>
+<td>0</td>
+<td>-245.53</td>
+<td>625.66</td>
+<td>-245.53</td>
+</tr>
+<tr class="odd">
+<td>2025-03-10</td>
+<td>100</td>
+<td>-61052.53</td>
+<td>597.99</td>
+<td>-1253.53</td>
+</tr>
+<tr class="even">
+<td>2025-03-11</td>
+<td>100</td>
+<td>-61052.53</td>
+<td>605.71</td>
+<td>-481.53</td>
+</tr>
+<tr class="odd">
+<td>2025-03-12</td>
+<td>100</td>
+<td>-61052.53</td>
+<td>619.56</td>
+<td>903.47</td>
+</tr>
+<tr class="even">
+<td>2025-03-13</td>
+<td>100</td>
+<td>-61052.53</td>
+<td>590.64</td>
+<td>-1988.53</td>
+</tr>
+<tr class="odd">
+<td>2025-03-14</td>
+<td>0</td>
+<td>-292.53</td>
+<td>607.60</td>
+<td>-292.53</td>
+</tr>
+<tr class="even">
+<td>2025-03-17</td>
+<td>-100</td>
+<td>60479.47</td>
+<td>604.90</td>
+<td>-10.53</td>
+</tr>
+<tr class="odd">
+<td>2025-03-18</td>
+<td>-100</td>
+<td>60479.47</td>
+<td>582.36</td>
+<td>2243.47</td>
+</tr>
+<tr class="even">
+<td>2025-03-19</td>
+<td>-100</td>
+<td>60479.47</td>
+<td>584.06</td>
+<td>2073.47</td>
+</tr>
+<tr class="odd">
+<td>2025-03-20</td>
+<td>-100</td>
+<td>60479.47</td>
+<td>586.00</td>
+<td>1879.47</td>
+</tr>
+<tr class="even">
+<td>2025-03-21</td>
+<td>0</td>
+<td>854.47</td>
+<td>596.25</td>
+<td>854.47</td>
+</tr>
+<tr class="odd">
+<td>2025-03-24</td>
+<td>-100</td>
+<td>62351.47</td>
+<td>618.85</td>
+<td>466.47</td>
+</tr>
+<tr class="even">
+<td>2025-03-25</td>
+<td>-100</td>
+<td>62351.47</td>
+<td>626.31</td>
+<td>-279.53</td>
+</tr>
+<tr class="odd">
+<td>2025-03-26</td>
+<td>-100</td>
+<td>62351.47</td>
+<td>610.98</td>
+<td>1253.47</td>
+</tr>
+<tr class="even">
+<td>2025-03-27</td>
+<td>-100</td>
+<td>62351.47</td>
+<td>602.58</td>
+<td>2093.47</td>
+</tr>
+<tr class="odd">
+<td>2025-03-28</td>
+<td>0</td>
+<td>4494.95</td>
+<td>576.74</td>
+<td>4494.95</td>
+</tr>
+<tr class="even">
+<td>2025-03-31</td>
+<td>100</td>
+<td>-51855.05</td>
+<td>576.36</td>
+<td>5780.95</td>
+</tr>
+<tr class="odd">
+<td>2025-04-01</td>
+<td>0</td>
+<td>6572.81</td>
+<td>586.00</td>
+<td>6572.81</td>
+</tr>
+<tr class="even">
+<td>2025-04-02</td>
+<td>0</td>
+<td>6572.81</td>
+<td>583.93</td>
+<td>6572.81</td>
+</tr>
+<tr class="odd">
+<td>2025-04-03</td>
+<td>0</td>
+<td>6572.81</td>
+<td>531.62</td>
+<td>6572.81</td>
+</tr>
+<tr class="even">
+<td>2025-04-04</td>
+<td>0</td>
+<td>6572.81</td>
+<td>504.73</td>
+<td>6572.81</td>
+</tr>
+<tr class="odd">
+<td>2025-04-07</td>
+<td>0</td>
+<td>10978.06</td>
+<td>516.25</td>
+<td>10978.06</td>
+</tr>
+<tr class="even">
+<td>2025-04-08</td>
+<td>0</td>
+<td>10978.06</td>
+<td>510.45</td>
+<td>10978.06</td>
+</tr>
+<tr class="odd">
+<td>2025-04-09</td>
+<td>0</td>
+<td>10978.06</td>
+<td>585.77</td>
+<td>10978.06</td>
+</tr>
+<tr class="even">
+<td>2025-04-10</td>
+<td>0</td>
+<td>10978.06</td>
+<td>546.29</td>
+<td>10978.06</td>
+</tr>
+<tr class="odd">
+<td>2025-04-11</td>
+<td>0</td>
+<td>10978.06</td>
+<td>543.57</td>
+<td>10978.06</td>
+</tr>
+<tr class="even">
+<td>2025-04-14</td>
+<td>-100</td>
+<td>66596.06</td>
+<td>531.48</td>
+<td>13448.06</td>
+</tr>
+<tr class="odd">
+<td>2025-04-15</td>
+<td>-100</td>
+<td>66596.06</td>
+<td>521.52</td>
+<td>14444.06</td>
+</tr>
+<tr class="even">
+<td>2025-04-16</td>
+<td>-100</td>
+<td>66596.06</td>
+<td>502.31</td>
+<td>16365.06</td>
+</tr>
+<tr class="odd">
+<td>2025-04-17</td>
+<td>0</td>
+<td>16448.06</td>
+<td>501.48</td>
+<td>16448.06</td>
+</tr>
+<tr class="even">
+<td>2025-04-21</td>
+<td>100</td>
+<td>-32684.94</td>
+<td>484.66</td>
+<td>15781.06</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("ledger-search");
+  input.addEventListener("keyup", function () {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("#ledger-table tbody tr");
+    rows.forEach(row => {
+      const dateCell = row.cells[0]?.textContent?.toLowerCase() || "";
+      if (dateCell.includes(filter)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
+});
+</script>
 
 
 </section>
