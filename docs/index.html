@@ -71,7 +71,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
-<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
 <script src="static/price_data.js"></script>
 
 
@@ -127,7 +127,6 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#mean-reversion-strategy" id="toc-mean-reversion-strategy" class="nav-link active" data-scroll-target="#mean-reversion-strategy">Mean Reversion Strategy</a></li>
-  <li><a href="#view-last-months-stock-price" id="toc-view-last-months-stock-price" class="nav-link" data-scroll-target="#view-last-months-stock-price">📊View Last Month’s Stock Price</a></li>
   <li><a href="#scoring-system" id="toc-scoring-system" class="nav-link" data-scroll-target="#scoring-system">Scoring System</a></li>
   <li><a href="#strategy-outcome" id="toc-strategy-outcome" class="nav-link" data-scroll-target="#strategy-outcome">Strategy Outcome</a></li>
   </ul>
@@ -171,13 +170,13 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="mean-reversion-strategy">Mean Reversion Strategy</h3>
 <section id="strategy-overview" class="level4">
 <h4 class="anchored" data-anchor-id="strategy-overview">1. Strategy Overview</h4>
-<p>Mean reversion: Since the stocks in the portfolio all come from representative large companies and have high liquidity. The prices of these stocks usually do not fluctuate sharply. Therefore, we formulate the mean reversion strategy, expecting the stock price to pull back when the stock price is high and short selling. When the stock price is low, it is expected to rebound.</p>
+<p><strong>Mean reversion</strong>: Since the stocks in the portfolio all come from representative large companies and have high liquidity. The prices of these stocks usually do not fluctuate sharply. Therefore, we formulate the mean reversion strategy, expecting the stock price to pull back when the stock price is high and short selling. When the stock price is low, it is expected to rebound.</p>
 </section>
 <section id="portfolio-choice" class="level4">
 <h4 class="anchored" data-anchor-id="portfolio-choice">2. Portfolio Choice</h4>
 <p>We selected these 10 stocks for their strong <strong>sector representation</strong>, <strong>high liquidity</strong>, and <strong>market relevance</strong>. Each stock comes from a different major industry, ensuring diversification and reducing sector-specific risk. As large-cap, actively traded companies, they offer reliable data and efficient execution,.</p>
-<div id="43db4b1f" class="cell" data-dataframe-index-label="No." data-dataframe-show-index="true" data-execution_count="1">
-<div class="cell-output cell-output-display" data-execution_count="1">
+<div id="7a48db32" class="cell" data-dataframe-index-label="No." data-dataframe-show-index="true" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="20">
 <div>
 
 
@@ -247,50 +246,9 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </section>
-</section>
-<section id="view-last-months-stock-price" class="level3">
-<h3 class="anchored" data-anchor-id="view-last-months-stock-price">📊View Last Month’s Stock Price</h3>
-<h4 class="anchored">
-🔽 Choose a Stock:
-</h4>
-<p><select id="stock-selector"> <option value="AAPL">AAPL</option> <option value="MSFT">MSFT</option> <option value="JPM">JPM</option> <option value="XOM">XOM</option> <option value="JNJ">JNJ</option> <option value="PG">PG</option> <option value="NVDA">NVDA</option> <option value="CAT">CAT</option> <option value="HD">HD</option> <option value="AMZN">AMZN</option> </select></p>
-<div id="plotly-container" style="height: 500px;">
-
-</div>
-<script>
-function plotStock(ticker) {
-  const data = priceData[ticker];
-  if (!data || data.length === 0) {
-    document.getElementById('plotly-container').innerHTML = "<p>No data available for " + ticker + ".</p>";
-    return;
-  }
-
-  const trace = {
-    x: data.map(d => d.Date),
-    y: data.map(d => d.Close),
-    mode: 'lines+markers',
-    name: ticker,
-    line: { color: '#1f77b4' }
-  };
-  const layout = {
-    title: `${ticker} - Last Month Closing Prices`,
-    xaxis: { title: 'Date' },
-    yaxis: { title: 'Price (USD)' }
-  };
-  Plotly.newPlot('plotly-container', [trace], layout);
-}
-
-window.addEventListener("load", function () {
-  plotStock("AAPL");
-
-  document.getElementById("stock-selector").addEventListener("change", function () {
-    plotStock(this.value);
-  });
-});
-</script>
 <section id="adjustment-method" class="level4">
 <h4 class="anchored" data-anchor-id="adjustment-method">3. Adjustment Method</h4>
-<p>Monthly portfolio adjustment + take-profit and stop-loss (Each stock is closed when it meets the take-profit and stop-loss conditions before the next portfolio adjustment to obtain cash and earn a risk-free interest rate)</p>
+<p><strong>monthly portfolio adjustment</strong> &amp; <strong>stop-loss and take-profit</strong> (Each stock is closed when it meets the take-profit and stop-loss conditions before the next portfolio adjustment to obtain cash and earn a risk-free interest rate)</p>
 </section>
 </section>
 <section id="scoring-system" class="level3">
@@ -301,8 +259,8 @@ window.addEventListener("load", function () {
 <section id="ema-deviation-delta-calculation" class="level5">
 <h5 class="anchored" data-anchor-id="ema-deviation-delta-calculation">1.1 EMA Deviation (Delta) Calculation</h5>
 <p>The <strong>EMA deviation</strong> measures how far the current price is from its 20-day Exponential Moving Average (EMA). It is calculated as: <code>Δ = 100% × (Close − EMA₍₂₀₎) / EMA₍₂₀₎</code></p>
-<div id="6a97c736" class="cell" data-execution_count="2">
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div id="8a111cc4" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="21">
 <div>
 
 
@@ -320,60 +278,60 @@ window.addEventListener("load", function () {
 <td data-quarto-table-cell-role="th">1</td>
 <td>&gt; +5%</td>
 <td>5</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">2</td>
 <td>+3% – +5%</td>
 <td>4</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">3</td>
 <td>+1% – +3%</td>
 <td>3</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">4</td>
 <td>0 – +1%</td>
 <td>2</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">5</td>
 <td>&lt; 0%</td>
 <td>0</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">6</td>
 <td>&lt; –5%</td>
-<td>-</td>
+<td>0</td>
 <td>5</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">7</td>
 <td>–5% – –3%</td>
-<td>-</td>
+<td>0</td>
 <td>4</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">8</td>
 <td>–3% – –1%</td>
-<td>-</td>
+<td>0</td>
 <td>3</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">9</td>
 <td>–1% – 0%</td>
-<td>-</td>
+<td>0</td>
 <td>2</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">10</td>
 <td>&gt; 0%</td>
-<td>-</td>
+<td>0</td>
 <td>0</td>
 </tr>
 </tbody>
@@ -386,8 +344,8 @@ window.addEventListener("load", function () {
 <section id="macd-moving-average-convergence-divergence" class="level5">
 <h5 class="anchored" data-anchor-id="macd-moving-average-convergence-divergence">1.2 MACD (Moving Average Convergence Divergence)</h5>
 <p>The <strong>MACD difference</strong> is calculated as: <code>MACD difference = MACD line – Signal line</code></p>
-<div id="2a524f96" class="cell" data-execution_count="3">
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div id="39908e03" class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="22">
 <div>
 
 
@@ -405,73 +363,61 @@ window.addEventListener("load", function () {
 <td data-quarto-table-cell-role="th">1</td>
 <td>&gt; +1.5</td>
 <td>5</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">2</td>
 <td>+1.0 – +1.5</td>
 <td>4</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">3</td>
 <td>+0.5 – +1.0</td>
 <td>3</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">4</td>
 <td>+0.1 – +0.5</td>
 <td>2</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">5</td>
 <td>0 – +0.1</td>
 <td>1</td>
-<td>-</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">6</td>
-<td>≤ 0</td>
+<td>–0.1 – 0</td>
 <td>0</td>
-<td>-</td>
+<td>1</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">7</td>
-<td>&lt; –1.5</td>
-<td>-</td>
-<td>5</td>
+<td>–0.5 – –0.1</td>
+<td>0</td>
+<td>2</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">8</td>
-<td>–1.5 – –1.0</td>
-<td>-</td>
-<td>4</td>
+<td>–1.0 – –0.5</td>
+<td>0</td>
+<td>3</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">9</td>
-<td>–1.0 – –0.5</td>
-<td>-</td>
-<td>3</td>
+<td>–1.5 – –1.0</td>
+<td>0</td>
+<td>4</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">10</td>
-<td>–0.5 – –0.1</td>
-<td>-</td>
-<td>2</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">11</td>
-<td>–0.1 – 0</td>
-<td>-</td>
-<td>1</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">12</td>
-<td>≥ 0</td>
-<td>-</td>
+<td>&lt; –1.5</td>
 <td>0</td>
+<td>5</td>
 </tr>
 </tbody>
 </table>
@@ -483,8 +429,8 @@ window.addEventListener("load", function () {
 <section id="adx-average-directional-index" class="level5">
 <h5 class="anchored" data-anchor-id="adx-average-directional-index">1.3 ADX (Average Directional Index)</h5>
 <p>The reversal strategy is suitable for operation in a moderately trending market; neither too strong nor too weak is appropriate.</p>
-<div id="ad273f4b" class="cell" data-execution_count="4">
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div id="adbaef8c" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="23">
 <div>
 
 
@@ -538,8 +484,8 @@ window.addEventListener("load", function () {
 <section id="atr-average-true-range" class="level5">
 <h5 class="anchored" data-anchor-id="atr-average-true-range">1.4 ATR (Average True Range)</h5>
 <p>The <strong>ATR ratio</strong> measures <strong>relative volatility</strong> by comparing the current ATR to its 20-day average: <code>ATR Ratio = Current ATR / 20-day ATR Average</code></p>
-<div id="205bf97f" class="cell" data-execution_count="5">
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div id="5e0ee71f" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="24">
 <div>
 
 
@@ -600,8 +546,8 @@ window.addEventListener("load", function () {
 <li><strong>Low IV</strong>: The market is calm with low volatility, often followed by upward price corrections — favorable for <strong>long</strong> positions.</li>
 <li><strong>High IV</strong>: The market is fearful with large swings, making it prone to overreactions — favorable for <strong>short</strong> positions in anticipation of reversals or bubbles bursting.</li>
 </ul>
-<div id="d3f70d78" class="cell" data-execution_count="6">
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div id="904705da" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="25">
 <div>
 
 
@@ -665,8 +611,8 @@ window.addEventListener("load", function () {
 <li><strong>Normal (spread &gt; 0%)</strong>: Indicates a healthy, growing economy; supports <strong>long</strong> positions and mean-reversion strategies.</li>
 <li><strong>Inverted (spread &lt; 0%)</strong>: Often seen as a sign of recession or heightened risk; favors <strong>short</strong> positions to hedge against economic downturns.</li>
 </ul>
-<div id="9de09ee6" class="cell" data-execution_count="7">
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div id="f899afb0" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="26">
 <div>
 
 
@@ -728,8 +674,8 @@ window.addEventListener("load", function () {
 <h4 class="anchored" data-anchor-id="determining-trade-direction-weight-allocation">3. Determining Trade Direction &amp; Weight Allocation</h4>
 <p>For each stock, we compute both long and short scores:</p>
 <ul>
-<li><strong>Total_Long</strong> = EMA_long + MACD_long + ADX + ATR</li>
-<li><strong>Total_Short</strong> = EMA_short + MACD_short + ADX + ATR</li>
+<li><strong>Total_Long</strong> = 0.25 * EMA_long + 0.25 * MACD_long + 0.1 * ADX + 0.1 * ATR + 0.15 * iv_long + 0.15 * yield_spread_long</li>
+<li><strong>Total_Short</strong> = 0.25 * EMA_short + 0.25 * MACD_short + 0.1 * ADX + 0.1 * ATR + 0.15 * iv_short + 0.15 * yield_spread_short</li>
 </ul>
 <p>We compare the two totals and select the side with the higher score as the <strong>trading direction</strong> (long or short).</p>
 <p>Once the direction is determined for each stock, we normalize scores within each group to allocate weights:</p>
@@ -740,7 +686,7 @@ window.addEventListener("load", function () {
 <li>Long positions receive <strong>positive weights</strong></li>
 <li>Short positions receive <strong>negative weights</strong></li>
 </ul></li>
-<li><p><strong>Weight Meaning</strong>: The final weight represents <strong>capital allocation ratio</strong> in the portfolio, subject to risk constraints.</p></li>
+<li><p><strong>Weight Meaning</strong>: The final weight represents <strong>capital allocation ratio</strong> in the portfolio.</p></li>
 </ul>
 </section>
 </section>
@@ -756,223 +702,106 @@ window.addEventListener("load", function () {
 <section id="blotter" class="level4">
 <h4 class="anchored" data-anchor-id="blotter"><strong>Blotter</strong></h4>
 <h4 class="anchored">
-🔍 Search by Date:
+Search by Trading Period:
 </h4>
-<p><input type="text" id="blotter-search" placeholder="e.g., 2025-04-15" style="padding: 5px; margin-bottom: 10px; width: 200px;"></p>
+<p><input type="text" id="blotter-search" placeholder="e.g., 2025.01" style="padding: 5px; margin-bottom: 10px; width: 200px;"></p>
 <div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
-<div id="2837ad5d" class="cell" data-execution_count="8">
+<div id="65a75af1" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <table id="blotter-table" class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th">entry_timestamp</th>
-<th data-quarto-table-cell-role="th">qty</th>
-<th data-quarto-table-cell-role="th">exit_timestamp</th>
-<th data-quarto-table-cell-role="th">entry_price</th>
-<th data-quarto-table-cell-role="th">exit_price</th>
-<th data-quarto-table-cell-role="th">success</th>
+<th data-quarto-table-cell-role="th">trd_prd</th>
+<th data-quarto-table-cell-role="th">AAPL</th>
+<th data-quarto-table-cell-role="th">MSFT</th>
+<th data-quarto-table-cell-role="th">JPM</th>
+<th data-quarto-table-cell-role="th">XOM</th>
+<th data-quarto-table-cell-role="th">JNJ</th>
+<th data-quarto-table-cell-role="th">PG</th>
+<th data-quarto-table-cell-role="th">NVDA</th>
+<th data-quarto-table-cell-role="th">CAT</th>
+<th data-quarto-table-cell-role="th">HD</th>
+<th data-quarto-table-cell-role="th">AMZN</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>2024-11-04 09:30:00</td>
-<td>100</td>
-<td>2024-11-07 09:30:00</td>
-<td>563.71</td>
-<td>583.033277</td>
-<td>True</td>
+<td>2024.11</td>
+<td>0.106719</td>
+<td>0.124506</td>
+<td>-0.088933</td>
+<td>0.118577</td>
+<td>0.098814</td>
+<td>0.138340</td>
+<td>0.098814</td>
+<td>0.156126</td>
+<td>0.144269</td>
+<td>0.102767</td>
 </tr>
 <tr class="even">
-<td>2024-11-11 09:30:00</td>
-<td>100</td>
-<td>2024-11-15 15:00:00</td>
-<td>586.36</td>
-<td>554.080000</td>
-<td>False</td>
+<td>2024.12</td>
+<td>-0.186246</td>
+<td>-0.140401</td>
+<td>-0.191977</td>
+<td>0.143266</td>
+<td>-0.106017</td>
+<td>-0.200573</td>
+<td>0.183381</td>
+<td>-0.186246</td>
+<td>-0.186246</td>
+<td>-0.128940</td>
 </tr>
 <tr class="odd">
-<td>2024-11-18 09:30:00</td>
-<td>-100</td>
-<td>2024-11-22 15:00:00</td>
-<td>557.04</td>
-<td>559.140000</td>
-<td>False</td>
+<td>2025.01</td>
+<td>-0.126949</td>
+<td>0.144766</td>
+<td>0.113586</td>
+<td>0.124722</td>
+<td>0.091314</td>
+<td>0.113586</td>
+<td>0.142539</td>
+<td>0.144766</td>
+<td>0.131403</td>
+<td>0.120267</td>
 </tr>
 <tr class="even">
-<td>2024-11-25 09:30:00</td>
-<td>-100</td>
-<td>2024-11-29 12:00:00</td>
-<td>562.50</td>
-<td>574.320000</td>
-<td>False</td>
+<td>2025.02</td>
+<td>0.239583</td>
+<td>0.354167</td>
+<td>-0.348958</td>
+<td>-0.213542</td>
+<td>-0.312500</td>
+<td>-0.239583</td>
+<td>0.385417</td>
+<td>-0.244792</td>
+<td>-0.286458</td>
+<td>-0.333333</td>
 </tr>
 <tr class="odd">
-<td>2024-12-02 09:30:00</td>
-<td>-100</td>
-<td>2024-12-06 15:00:00</td>
-<td>577.54</td>
-<td>623.770000</td>
-<td>False</td>
+<td>2025.03</td>
+<td>-0.522936</td>
+<td>0.532110</td>
+<td>0.477064</td>
+<td>-0.422018</td>
+<td>-0.559633</td>
+<td>-0.633028</td>
+<td>0.550459</td>
+<td>0.495413</td>
+<td>0.541284</td>
+<td>0.541284</td>
 </tr>
 <tr class="even">
-<td>2024-12-09 09:30:00</td>
-<td>-100</td>
-<td>2024-12-09 11:00:00</td>
-<td>623.93</td>
-<td>607.572609</td>
-<td>True</td>
-</tr>
-<tr class="odd">
-<td>2024-12-16 09:30:00</td>
-<td>-100</td>
-<td>2024-12-18 15:00:00</td>
-<td>630.05</td>
-<td>604.160024</td>
-<td>True</td>
-</tr>
-<tr class="even">
-<td>2024-12-23 09:30:00</td>
-<td>-100</td>
-<td>2024-12-27 15:00:00</td>
-<td>589.60</td>
-<td>599.810000</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td>2024-12-30 09:30:00</td>
-<td>100</td>
-<td>2025-01-02 10:00:00</td>
-<td>588.51</td>
-<td>604.748544</td>
-<td>True</td>
-</tr>
-<tr class="even">
-<td>2025-01-06 09:30:00</td>
-<td>-100</td>
-<td>2025-01-10 15:00:00</td>
-<td>611.51</td>
-<td>615.860000</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td>2025-01-13 09:30:00</td>
-<td>100</td>
-<td>2025-01-17 15:00:00</td>
-<td>607.13</td>
-<td>612.770000</td>
-<td>False</td>
-</tr>
-<tr class="even">
-<td>2025-01-21 09:30:00</td>
-<td>-100</td>
-<td>2025-01-24 15:00:00</td>
-<td>618.15</td>
-<td>647.490000</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td>2025-01-27 09:30:00</td>
-<td>100</td>
-<td>2025-01-27 10:00:00</td>
-<td>626.64</td>
-<td>643.785896</td>
-<td>True</td>
-</tr>
-<tr class="even">
-<td>2025-02-03 09:30:00</td>
-<td>100</td>
-<td>2025-02-07 09:30:00</td>
-<td>675.56</td>
-<td>722.951077</td>
-<td>True</td>
-</tr>
-<tr class="odd">
-<td>2025-02-10 09:30:00</td>
-<td>-100</td>
-<td>2025-02-14 15:00:00</td>
-<td>718.97</td>
-<td>736.670000</td>
-<td>False</td>
-</tr>
-<tr class="even">
-<td>2025-02-18 09:30:00</td>
-<td>100</td>
-<td>2025-02-21 15:00:00</td>
-<td>736.33</td>
-<td>683.550000</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td>2025-02-24 09:30:00</td>
-<td>-100</td>
-<td>2025-02-24 10:00:00</td>
-<td>686.09</td>
-<td>662.495202</td>
-<td>True</td>
-</tr>
-<tr class="even">
-<td>2025-03-03 09:30:00</td>
-<td>-100</td>
-<td>2025-03-04 09:30:00</td>
-<td>673.68</td>
-<td>640.906310</td>
-<td>True</td>
-</tr>
-<tr class="odd">
-<td>2025-03-10 09:30:00</td>
-<td>100</td>
-<td>2025-03-14 15:00:00</td>
-<td>608.07</td>
-<td>607.600000</td>
-<td>False</td>
-</tr>
-<tr class="even">
-<td>2025-03-17 09:30:00</td>
-<td>-100</td>
-<td>2025-03-21 15:00:00</td>
-<td>607.72</td>
-<td>596.250000</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td>2025-03-24 09:30:00</td>
-<td>-100</td>
-<td>2025-03-28 14:00:00</td>
-<td>614.97</td>
-<td>578.565211</td>
-<td>True</td>
-</tr>
-<tr class="even">
-<td>2025-03-31 09:30:00</td>
-<td>100</td>
-<td>2025-04-01 11:00:00</td>
-<td>563.50</td>
-<td>584.278581</td>
-<td>True</td>
-</tr>
-<tr class="odd">
-<td>2025-04-07 09:30:00</td>
-<td>100</td>
-<td>2025-04-07 10:00:00</td>
-<td>486.55</td>
-<td>530.602509</td>
-<td>True</td>
-</tr>
-<tr class="even">
-<td>2025-04-14 09:30:00</td>
-<td>-100</td>
-<td>2025-04-17 15:00:00</td>
-<td>556.18</td>
-<td>501.480000</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td>2025-04-21 09:30:00</td>
-<td>100</td>
-<td>NaN</td>
-<td>491.33</td>
-<td>NaN</td>
-<td>NaN</td>
+<td>2025.04</td>
+<td>0.847458</td>
+<td>0.796610</td>
+<td>-0.508475</td>
+<td>-1.033898</td>
+<td>-0.694915</td>
+<td>0.779661</td>
+<td>1.118644</td>
+<td>-0.847458</td>
+<td>-0.677966</td>
+<td>1.220339</td>
 </tr>
 </tbody>
 </table>
@@ -1000,820 +829,3161 @@ document.addEventListener("DOMContentLoaded", function () {
 <section id="ledger" class="level4">
 <h4 class="anchored" data-anchor-id="ledger"><strong>Ledger</strong></h4>
 <h4 class="anchored">
-🔍 Search Ledger by Date:
+Search Ledger by Date:
 </h4>
 <p><input type="text" id="ledger-search" placeholder="e.g., 2025-04-15" style="padding: 5px; margin-bottom: 10px; width: 200px;"></p>
 <div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
-<div id="db91356d" class="cell" data-execution_count="9">
+<div id="d1bd0f83" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <table id="ledger-table" class="dataframe table table-striped caption-top table-sm small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th">date</th>
-<th data-quarto-table-cell-role="th">position</th>
-<th data-quarto-table-cell-role="th">cash</th>
-<th data-quarto-table-cell-role="th">mark</th>
-<th data-quarto-table-cell-role="th">mkt_value</th>
+<th data-quarto-table-cell-role="th">Date</th>
+<th data-quarto-table-cell-role="th">Cash</th>
+<th data-quarto-table-cell-role="th">AAPL Qty</th>
+<th data-quarto-table-cell-role="th">MSFT Qty</th>
+<th data-quarto-table-cell-role="th">JPM Qty</th>
+<th data-quarto-table-cell-role="th">XOM Qty</th>
+<th data-quarto-table-cell-role="th">JNJ Qty</th>
+<th data-quarto-table-cell-role="th">PG Qty</th>
+<th data-quarto-table-cell-role="th">NVDA Qty</th>
+<th data-quarto-table-cell-role="th">CAT Qty</th>
+<th data-quarto-table-cell-role="th">HD Qty</th>
+<th data-quarto-table-cell-role="th">AMZN Qty</th>
+<th data-quarto-table-cell-role="th">AAPL Price</th>
+<th data-quarto-table-cell-role="th">MSFT Price</th>
+<th data-quarto-table-cell-role="th">JPM Price</th>
+<th data-quarto-table-cell-role="th">XOM Price</th>
+<th data-quarto-table-cell-role="th">JNJ Price</th>
+<th data-quarto-table-cell-role="th">PG Price</th>
+<th data-quarto-table-cell-role="th">NVDA Price</th>
+<th data-quarto-table-cell-role="th">CAT Price</th>
+<th data-quarto-table-cell-role="th">HD Price</th>
+<th data-quarto-table-cell-role="th">AMZN Price</th>
+<th data-quarto-table-cell-role="th">Portfolio Value</th>
+<th data-quarto-table-cell-role="th">Market Value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>2024-11-01</td>
+<td>217620.41</td>
+<td>482</td>
+<td>304</td>
+<td>-397</td>
+<td>0</td>
+<td>615</td>
+<td>836</td>
+<td>0</td>
+<td>412</td>
+<td>365</td>
+<td>516</td>
+<td>222.91</td>
+<td>410.37</td>
+<td>222.94</td>
+<td>114.95</td>
+<td>160.13</td>
+<td>165.10</td>
+<td>135.40</td>
+<td>379.63</td>
+<td>392.59</td>
+<td>197.93</td>
+<td>782026.26</td>
+<td>999646.67</td>
+</tr>
+<tr class="even">
 <td>2024-11-04</td>
-<td>100</td>
-<td>-56371.00</td>
-<td>560.68</td>
-<td>-303.00</td>
+<td>968506.40</td>
+<td>482</td>
+<td>304</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>836</td>
+<td>0</td>
+<td>412</td>
+<td>365</td>
+<td>0</td>
+<td>222.01</td>
+<td>408.46</td>
+<td>219.78</td>
+<td>118.61</td>
+<td>158.24</td>
+<td>165.08</td>
+<td>136.05</td>
+<td>376.52</td>
+<td>395.57</td>
+<td>195.78</td>
+<td>668696.83</td>
+<td>1637203.23</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-11-05</td>
-<td>100</td>
-<td>-56371.00</td>
-<td>572.43</td>
-<td>872.00</td>
+<td>1026309.84</td>
+<td>482</td>
+<td>304</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>836</td>
+<td>0</td>
+<td>0</td>
+<td>365</td>
+<td>0</td>
+<td>223.45</td>
+<td>411.46</td>
+<td>221.49</td>
+<td>118.96</td>
+<td>158.35</td>
+<td>165.76</td>
+<td>139.91</td>
+<td>383.37</td>
+<td>400.09</td>
+<td>199.50</td>
+<td>517394.95</td>
+<td>1543704.79</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-11-06</td>
-<td>100</td>
-<td>-56371.00</td>
-<td>572.05</td>
-<td>834.00</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>222.72</td>
+<td>420.18</td>
+<td>247.06</td>
+<td>121.00</td>
+<td>157.88</td>
+<td>161.05</td>
+<td>145.61</td>
+<td>416.88</td>
+<td>388.37</td>
+<td>207.09</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-11-07</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>1932.33</td>
-<td>591.70</td>
-<td>1932.33</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>227.48</td>
+<td>425.43</td>
+<td>236.38</td>
+<td>121.15</td>
+<td>156.73</td>
+<td>163.41</td>
+<td>148.88</td>
+<td>408.21</td>
+<td>399.44</td>
+<td>210.05</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-11-08</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>1932.33</td>
-<td>589.34</td>
-<td>1932.33</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>226.96</td>
+<td>422.54</td>
+<td>236.98</td>
+<td>121.11</td>
+<td>155.47</td>
+<td>167.71</td>
+<td>147.63</td>
+<td>393.37</td>
+<td>405.90</td>
+<td>208.18</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-11-11</td>
-<td>100</td>
-<td>-56703.67</td>
-<td>583.17</td>
-<td>1613.33</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>224.23</td>
+<td>418.01</td>
+<td>239.29</td>
+<td>120.47</td>
+<td>155.04</td>
+<td>166.03</td>
+<td>145.26</td>
+<td>396.54</td>
+<td>408.29</td>
+<td>206.84</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-11-12</td>
-<td>100</td>
-<td>-56703.67</td>
-<td>584.82</td>
-<td>1778.33</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>224.23</td>
+<td>423.03</td>
+<td>239.56</td>
+<td>120.35</td>
+<td>152.64</td>
+<td>165.84</td>
+<td>148.29</td>
+<td>393.01</td>
+<td>403.08</td>
+<td>208.91</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-11-13</td>
-<td>100</td>
-<td>-56703.67</td>
-<td>580.00</td>
-<td>1296.33</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>225.12</td>
+<td>425.20</td>
+<td>241.16</td>
+<td>121.47</td>
+<td>153.24</td>
+<td>166.58</td>
+<td>146.27</td>
+<td>387.07</td>
+<td>410.19</td>
+<td>214.10</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-11-14</td>
-<td>100</td>
-<td>-56703.67</td>
-<td>577.16</td>
-<td>1012.33</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>228.22</td>
+<td>426.89</td>
+<td>241.87</td>
+<td>120.56</td>
+<td>151.87</td>
+<td>167.08</td>
+<td>146.76</td>
+<td>387.36</td>
+<td>405.72</td>
+<td>211.48</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-11-15</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-1295.67</td>
-<td>554.08</td>
-<td>-1295.67</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>225.00</td>
+<td>415.00</td>
+<td>245.31</td>
+<td>119.31</td>
+<td>154.00</td>
+<td>169.54</td>
+<td>141.98</td>
+<td>384.07</td>
+<td>408.18</td>
+<td>202.61</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-11-18</td>
-<td>-100</td>
-<td>54408.33</td>
-<td>554.40</td>
-<td>-1031.67</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>228.02</td>
+<td>415.76</td>
+<td>245.03</td>
+<td>120.31</td>
+<td>154.77</td>
+<td>170.75</td>
+<td>140.15</td>
+<td>384.46</td>
+<td>410.44</td>
+<td>201.70</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-11-19</td>
-<td>-100</td>
-<td>54408.33</td>
-<td>561.09</td>
-<td>-1700.67</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>228.28</td>
+<td>417.79</td>
+<td>243.09</td>
+<td>118.63</td>
+<td>153.00</td>
+<td>170.76</td>
+<td>147.01</td>
+<td>382.33</td>
+<td>406.80</td>
+<td>204.61</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-11-20</td>
-<td>-100</td>
-<td>54408.33</td>
-<td>565.52</td>
-<td>-2143.67</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>229.00</td>
+<td>415.49</td>
+<td>240.78</td>
+<td>120.32</td>
+<td>153.11</td>
+<td>170.89</td>
+<td>145.89</td>
+<td>381.50</td>
+<td>400.00</td>
+<td>202.88</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-11-21</td>
-<td>-100</td>
-<td>54408.33</td>
-<td>563.09</td>
-<td>-1900.67</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>228.52</td>
+<td>412.87</td>
+<td>244.76</td>
+<td>121.93</td>
+<td>155.50</td>
+<td>172.75</td>
+<td>146.67</td>
+<td>389.59</td>
+<td>410.45</td>
+<td>198.38</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-11-22</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-1505.67</td>
-<td>559.14</td>
-<td>-1505.67</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>229.87</td>
+<td>417.00</td>
+<td>248.55</td>
+<td>121.79</td>
+<td>155.17</td>
+<td>176.28</td>
+<td>141.95</td>
+<td>397.49</td>
+<td>420.00</td>
+<td>197.12</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-11-25</td>
-<td>-100</td>
-<td>54744.33</td>
-<td>565.11</td>
-<td>-1766.67</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>232.87</td>
+<td>418.79</td>
+<td>250.29</td>
+<td>119.97</td>
+<td>155.78</td>
+<td>177.39</td>
+<td>136.02</td>
+<td>405.65</td>
+<td>428.67</td>
+<td>201.45</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-11-26</td>
-<td>-100</td>
-<td>54744.33</td>
-<td>573.54</td>
-<td>-2609.67</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>235.06</td>
+<td>427.99</td>
+<td>249.97</td>
+<td>117.97</td>
+<td>154.52</td>
+<td>179.31</td>
+<td>136.92</td>
+<td>407.83</td>
+<td>429.52</td>
+<td>207.86</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-11-27</td>
-<td>-100</td>
-<td>54744.33</td>
-<td>569.20</td>
-<td>-2175.67</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>234.93</td>
+<td>422.99</td>
+<td>249.79</td>
+<td>117.66</td>
+<td>155.40</td>
+<td>179.36</td>
+<td>135.34</td>
+<td>403.70</td>
+<td>427.19</td>
+<td>205.74</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-11-29</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-2687.67</td>
-<td>574.32</td>
-<td>-2687.67</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>237.33</td>
+<td>423.46</td>
+<td>249.72</td>
+<td>117.96</td>
+<td>155.01</td>
+<td>179.26</td>
+<td>138.25</td>
+<td>406.11</td>
+<td>429.13</td>
+<td>207.89</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-02</td>
-<td>-100</td>
-<td>55066.33</td>
-<td>592.83</td>
-<td>-4216.67</td>
+<td>2403001.10</td>
+<td>-784</td>
+<td>-333</td>
+<td>-769</td>
+<td>1213</td>
+<td>-685</td>
+<td>-1119</td>
+<td>1320</td>
+<td>-457</td>
+<td>-434</td>
+<td>-614</td>
+<td>239.59</td>
+<td>430.98</td>
+<td>246.25</td>
+<td>117.85</td>
+<td>154.80</td>
+<td>179.70</td>
+<td>138.63</td>
+<td>402.51</td>
+<td>426.96</td>
+<td>210.71</td>
+<td>-1000523.45</td>
+<td>1402477.65</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-03</td>
-<td>-100</td>
-<td>55066.33</td>
-<td>613.65</td>
-<td>-6298.67</td>
+<td>1403432.06</td>
+<td>-784</td>
+<td>-333</td>
+<td>-769</td>
+<td>1213</td>
+<td>-685</td>
+<td>-1119</td>
+<td>1320</td>
+<td>-457</td>
+<td>-434</td>
+<td>-614</td>
+<td>242.65</td>
+<td>431.20</td>
+<td>244.82</td>
+<td>117.67</td>
+<td>152.36</td>
+<td>175.42</td>
+<td>140.26</td>
+<td>399.26</td>
+<td>429.35</td>
+<td>213.44</td>
+<td>-994730.33</td>
+<td>408701.73</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-04</td>
-<td>-100</td>
-<td>55066.33</td>
-<td>613.78</td>
-<td>-6311.67</td>
+<td>776942.43</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-457</td>
+<td>-434</td>
+<td>0</td>
+<td>243.01</td>
+<td>437.42</td>
+<td>243.40</td>
+<td>114.28</td>
+<td>150.47</td>
+<td>175.11</td>
+<td>145.14</td>
+<td>399.51</td>
+<td>427.92</td>
+<td>218.16</td>
+<td>-368293.35</td>
+<td>408649.08</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-05</td>
-<td>-100</td>
-<td>55066.33</td>
-<td>608.93</td>
-<td>-5826.67</td>
+<td>1222258.98</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-434</td>
+<td>0</td>
+<td>243.04</td>
+<td>442.62</td>
+<td>245.48</td>
+<td>114.78</td>
+<td>149.52</td>
+<td>176.03</td>
+<td>145.06</td>
+<td>394.98</td>
+<td>426.54</td>
+<td>220.55</td>
+<td>-185118.36</td>
+<td>1037140.62</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-06</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-7310.67</td>
-<td>623.77</td>
-<td>-7310.67</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-434</td>
+<td>0</td>
+<td>242.84</td>
+<td>443.57</td>
+<td>247.36</td>
+<td>113.57</td>
+<td>149.31</td>
+<td>173.82</td>
+<td>142.44</td>
+<td>395.03</td>
+<td>431.37</td>
+<td>227.03</td>
+<td>-187214.58</td>
+<td>1216217.48</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-09</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-5674.93</td>
-<td>613.57</td>
-<td>-5674.93</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-434</td>
+<td>0</td>
+<td>246.75</td>
+<td>446.02</td>
+<td>243.81</td>
+<td>112.90</td>
+<td>149.60</td>
+<td>170.79</td>
+<td>138.81</td>
+<td>399.26</td>
+<td>429.18</td>
+<td>226.09</td>
+<td>-186264.12</td>
+<td>1217167.94</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-10</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-5674.93</td>
-<td>619.32</td>
-<td>-5674.93</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-434</td>
+<td>0</td>
+<td>247.77</td>
+<td>443.33</td>
+<td>242.86</td>
+<td>112.67</td>
+<td>149.23</td>
+<td>172.28</td>
+<td>135.07</td>
+<td>388.39</td>
+<td>422.59</td>
+<td>225.04</td>
+<td>-183404.06</td>
+<td>1220028.00</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-11</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-5674.93</td>
-<td>632.68</td>
-<td>-5674.93</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-434</td>
+<td>0</td>
+<td>246.49</td>
+<td>448.99</td>
+<td>243.53</td>
+<td>111.92</td>
+<td>146.64</td>
+<td>170.63</td>
+<td>139.31</td>
+<td>388.87</td>
+<td>421.38</td>
+<td>230.26</td>
+<td>-182878.92</td>
+<td>1220553.14</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-12</td>
+<td>1223278.66</td>
 <td>0</td>
-<td>-5674.93</td>
-<td>630.79</td>
-<td>-5674.93</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>247.96</td>
+<td>449.56</td>
+<td>241.53</td>
+<td>111.82</td>
+<td>146.24</td>
+<td>170.85</td>
+<td>137.34</td>
+<td>380.78</td>
+<td>414.42</td>
+<td>228.97</td>
+<td>0.00</td>
+<td>1223278.66</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-13</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-5674.93</td>
-<td>620.35</td>
-<td>-5674.93</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>248.13</td>
+<td>447.27</td>
+<td>239.94</td>
+<td>110.84</td>
+<td>146.62</td>
+<td>171.06</td>
+<td>134.25</td>
+<td>380.51</td>
+<td>416.98</td>
+<td>227.46</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-16</td>
-<td>-100</td>
-<td>57330.07</td>
-<td>624.24</td>
-<td>-5093.93</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>251.04</td>
+<td>451.59</td>
+<td>239.58</td>
+<td>108.47</td>
+<td>143.85</td>
+<td>171.14</td>
+<td>132.00</td>
+<td>378.92</td>
+<td>410.71</td>
+<td>232.93</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-17</td>
-<td>-100</td>
-<td>57330.07</td>
-<td>619.44</td>
-<td>-4613.93</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>253.48</td>
+<td>454.46</td>
+<td>238.36</td>
+<td>108.01</td>
+<td>146.41</td>
+<td>170.33</td>
+<td>130.39</td>
+<td>375.80</td>
+<td>408.47</td>
+<td>231.15</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-18</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3085.93</td>
-<td>597.19</td>
-<td>-3085.93</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>248.05</td>
+<td>437.39</td>
+<td>230.37</td>
+<td>106.42</td>
+<td>144.75</td>
+<td>169.08</td>
+<td>128.91</td>
+<td>363.89</td>
+<td>393.82</td>
+<td>220.52</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-19</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3085.93</td>
-<td>595.57</td>
-<td>-3085.93</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>249.79</td>
+<td>437.03</td>
+<td>232.96</td>
+<td>105.51</td>
+<td>143.58</td>
+<td>169.19</td>
+<td>130.68</td>
+<td>360.37</td>
+<td>385.02</td>
+<td>223.29</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-20</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3085.93</td>
-<td>585.25</td>
-<td>-3085.93</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>254.49</td>
+<td>436.60</td>
+<td>237.60</td>
+<td>105.87</td>
+<td>144.47</td>
+<td>168.06</td>
+<td>134.70</td>
+<td>366.04</td>
+<td>392.60</td>
+<td>224.92</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-23</td>
-<td>-100</td>
-<td>55874.07</td>
-<td>599.85</td>
-<td>-4110.93</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>255.27</td>
+<td>435.25</td>
+<td>238.39</td>
+<td>106.30</td>
+<td>145.27</td>
+<td>168.11</td>
+<td>139.67</td>
+<td>365.39</td>
+<td>392.45</td>
+<td>225.06</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-24</td>
-<td>-100</td>
-<td>55874.07</td>
-<td>607.75</td>
-<td>-4900.93</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>258.20</td>
+<td>439.33</td>
+<td>242.31</td>
+<td>106.40</td>
+<td>145.85</td>
+<td>168.94</td>
+<td>140.22</td>
+<td>367.57</td>
+<td>396.14</td>
+<td>229.05</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-26</td>
-<td>-100</td>
-<td>55874.07</td>
-<td>603.35</td>
-<td>-4460.93</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>259.02</td>
+<td>438.11</td>
+<td>243.14</td>
+<td>106.49</td>
+<td>145.58</td>
+<td>170.16</td>
+<td>139.93</td>
+<td>367.12</td>
+<td>395.14</td>
+<td>227.05</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-27</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-4106.93</td>
-<td>599.81</td>
-<td>-4106.93</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>255.59</td>
+<td>430.53</td>
+<td>241.17</td>
+<td>106.48</td>
+<td>145.05</td>
+<td>169.53</td>
+<td>137.01</td>
+<td>364.86</td>
+<td>392.86</td>
+<td>223.75</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2024-12-30</td>
-<td>100</td>
-<td>-62957.93</td>
-<td>591.24</td>
-<td>-3833.93</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>252.20</td>
+<td>424.83</td>
+<td>239.32</td>
+<td>105.76</td>
+<td>143.34</td>
+<td>167.09</td>
+<td>137.49</td>
+<td>363.01</td>
+<td>389.43</td>
+<td>221.30</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2024-12-31</td>
-<td>100</td>
-<td>-62957.93</td>
-<td>585.51</td>
-<td>-4406.93</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>250.42</td>
+<td>421.50</td>
+<td>239.71</td>
+<td>107.57</td>
+<td>144.62</td>
+<td>167.65</td>
+<td>134.29</td>
+<td>362.76</td>
+<td>388.99</td>
+<td>219.39</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-02</td>
-<td>0</td>
-<td>-2483.08</td>
-<td>599.24</td>
-<td>-2483.08</td>
+<td>403930.58</td>
+<td>-509</td>
+<td>340</td>
+<td>471</td>
+<td>1151</td>
+<td>628</td>
+<td>675</td>
+<td>1048</td>
+<td>396</td>
+<td>335</td>
+<td>540</td>
+<td>243.85</td>
+<td>418.58</td>
+<td>240.00</td>
+<td>107.31</td>
+<td>144.02</td>
+<td>165.98</td>
+<td>138.31</td>
+<td>359.77</td>
+<td>388.46</td>
+<td>220.22</td>
+<td>993703.12</td>
+<td>1397633.70</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-03</td>
+<td>1554270.70</td>
+<td>-509</td>
+<td>340</td>
+<td>471</td>
+<td>1151</td>
+<td>628</td>
+<td>675</td>
 <td>0</td>
-<td>-2483.08</td>
-<td>604.63</td>
-<td>-2483.08</td>
+<td>396</td>
+<td>335</td>
+<td>540</td>
+<td>243.36</td>
+<td>423.35</td>
+<td>243.28</td>
+<td>107.86</td>
+<td>144.19</td>
+<td>165.13</td>
+<td>144.47</td>
+<td>363.79</td>
+<td>389.18</td>
+<td>224.19</td>
+<td>856313.31</td>
+<td>2410584.01</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-06</td>
-<td>-100</td>
-<td>58667.92</td>
-<td>630.20</td>
-<td>-4352.08</td>
+<td>1512802.31</td>
+<td>-509</td>
+<td>340</td>
+<td>471</td>
+<td>1151</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>396</td>
+<td>335</td>
+<td>540</td>
+<td>245.00</td>
+<td>427.85</td>
+<td>240.85</td>
+<td>107.74</td>
+<td>143.66</td>
+<td>160.60</td>
+<td>149.43</td>
+<td>364.20</td>
+<td>389.37</td>
+<td>227.61</td>
+<td>746003.12</td>
+<td>2258805.43</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-07</td>
-<td>-100</td>
-<td>58667.92</td>
-<td>617.89</td>
-<td>-3121.08</td>
+<td>1403432.06</td>
+<td>-509</td>
+<td>340</td>
+<td>471</td>
+<td>1151</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>396</td>
+<td>335</td>
+<td>540</td>
+<td>242.21</td>
+<td>422.37</td>
+<td>243.17</td>
+<td>108.75</td>
+<td>146.23</td>
+<td>161.30</td>
+<td>140.14</td>
+<td>363.00</td>
+<td>384.23</td>
+<td>222.11</td>
+<td>744262.12</td>
+<td>2147694.18</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-08</td>
-<td>-100</td>
-<td>58667.92</td>
-<td>610.72</td>
-<td>-2404.08</td>
+<td>1408132.19</td>
+<td>0</td>
+<td>340</td>
+<td>471</td>
+<td>1151</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>396</td>
+<td>0</td>
+<td>540</td>
+<td>242.70</td>
+<td>424.56</td>
+<td>243.13</td>
+<td>106.93</td>
+<td>142.27</td>
+<td>162.10</td>
+<td>140.11</td>
+<td>361.07</td>
+<td>387.20</td>
+<td>222.13</td>
+<td>734220.54</td>
+<td>2142352.73</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-10</td>
+<td>1543683.38</td>
 <td>0</td>
-<td>-2918.08</td>
-<td>615.86</td>
-<td>-2918.08</td>
+<td>340</td>
+<td>471</td>
+<td>1151</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>540</td>
+<td>236.85</td>
+<td>418.95</td>
+<td>239.87</td>
+<td>106.54</td>
+<td>142.06</td>
+<td>158.56</td>
+<td>135.91</td>
+<td>351.00</td>
+<td>389.89</td>
+<td>218.94</td>
+<td>585490.59</td>
+<td>2129173.97</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-13</td>
-<td>100</td>
-<td>-63631.08</td>
-<td>608.33</td>
-<td>-2798.08</td>
+<td>1543773.86</td>
+<td>0</td>
+<td>0</td>
+<td>471</td>
+<td>1151</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>540</td>
+<td>234.40</td>
+<td>417.19</td>
+<td>244.21</td>
+<td>109.29</td>
+<td>144.47</td>
+<td>158.84</td>
+<td>133.23</td>
+<td>362.50</td>
+<td>389.18</td>
+<td>218.46</td>
+<td>449511.26</td>
+<td>1993285.12</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-14</td>
-<td>100</td>
-<td>-63631.08</td>
-<td>594.25</td>
-<td>-4206.08</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>471</td>
+<td>1151</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>540</td>
+<td>233.28</td>
+<td>415.67</td>
+<td>247.47</td>
+<td>109.72</td>
+<td>144.75</td>
+<td>159.74</td>
+<td>131.76</td>
+<td>371.57</td>
+<td>392.78</td>
+<td>217.76</td>
+<td>451339.49</td>
+<td>1854771.55</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-15</td>
-<td>100</td>
-<td>-63631.08</td>
-<td>617.12</td>
-<td>-1919.08</td>
+<td>1649406.61</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>540</td>
+<td>237.87</td>
+<td>426.31</td>
+<td>252.35</td>
+<td>111.51</td>
+<td>144.97</td>
+<td>159.65</td>
+<td>136.24</td>
+<td>374.89</td>
+<td>406.09</td>
+<td>223.35</td>
+<td>211650.16</td>
+<td>1861056.77</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-16</td>
-<td>100</td>
-<td>-63631.08</td>
-<td>611.30</td>
-<td>-2501.08</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>540</td>
+<td>228.26</td>
+<td>424.58</td>
+<td>254.27</td>
+<td>111.32</td>
+<td>147.77</td>
+<td>160.50</td>
+<td>133.57</td>
+<td>380.55</td>
+<td>409.33</td>
+<td>220.66</td>
+<td>211955.96</td>
+<td>1615388.02</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-17</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-2354.08</td>
-<td>612.77</td>
-<td>-2354.08</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>540</td>
+<td>229.98</td>
+<td>429.03</td>
+<td>259.16</td>
+<td>112.32</td>
+<td>147.03</td>
+<td>161.13</td>
+<td>137.71</td>
+<td>386.02</td>
+<td>409.38</td>
+<td>225.94</td>
+<td>214342.44</td>
+<td>1617774.50</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-21</td>
-<td>-100</td>
-<td>59460.92</td>
-<td>616.46</td>
-<td>-2185.08</td>
+<td>1527032.66</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>222.64</td>
+<td>428.50</td>
+<td>263.03</td>
+<td>111.47</td>
+<td>148.15</td>
+<td>161.72</td>
+<td>140.83</td>
+<td>398.36</td>
+<td>418.43</td>
+<td>230.71</td>
+<td>93038.20</td>
+<td>1620070.86</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-22</td>
-<td>-100</td>
-<td>59460.92</td>
-<td>623.50</td>
-<td>-2889.08</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>223.83</td>
+<td>446.20</td>
+<td>262.84</td>
+<td>109.53</td>
+<td>145.27</td>
+<td>164.74</td>
+<td>147.07</td>
+<td>397.61</td>
+<td>410.10</td>
+<td>235.01</td>
+<td>91229.56</td>
+<td>1494661.62</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-23</td>
-<td>-100</td>
-<td>59460.92</td>
-<td>636.45</td>
-<td>-4184.08</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>223.66</td>
+<td>446.71</td>
+<td>265.95</td>
+<td>110.15</td>
+<td>146.64</td>
+<td>166.15</td>
+<td>147.22</td>
+<td>406.40</td>
+<td>414.39</td>
+<td>235.42</td>
+<td>92089.92</td>
+<td>1495521.98</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-24</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-5288.08</td>
-<td>647.49</td>
-<td>-5288.08</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>628</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>222.78</td>
+<td>444.06</td>
+<td>264.84</td>
+<td>108.66</td>
+<td>146.82</td>
+<td>164.12</td>
+<td>142.62</td>
+<td>407.63</td>
+<td>414.50</td>
+<td>234.85</td>
+<td>92202.96</td>
+<td>1495635.02</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-27</td>
+<td>1497644.62</td>
 <td>0</td>
-<td>-3573.49</td>
-<td>659.88</td>
-<td>-3573.49</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>229.86</td>
+<td>434.56</td>
+<td>265.85</td>
+<td>110.17</td>
+<td>152.89</td>
+<td>169.66</td>
+<td>118.42</td>
+<td>394.98</td>
+<td>424.87</td>
+<td>235.42</td>
+<td>0.00</td>
+<td>1497644.62</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-28</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3573.49</td>
-<td>674.33</td>
-<td>-3573.49</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>238.26</td>
+<td>447.20</td>
+<td>267.14</td>
+<td>108.04</td>
+<td>150.38</td>
+<td>166.19</td>
+<td>128.99</td>
+<td>390.29</td>
+<td>418.83</td>
+<td>238.15</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-29</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3573.49</td>
-<td>676.49</td>
-<td>-3573.49</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>239.36</td>
+<td>442.33</td>
+<td>266.58</td>
+<td>108.67</td>
+<td>151.15</td>
+<td>166.23</td>
+<td>123.70</td>
+<td>393.23</td>
+<td>413.42</td>
+<td>237.07</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-01-30</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3573.49</td>
-<td>687.00</td>
-<td>-3573.49</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>237.59</td>
+<td>414.99</td>
+<td>268.23</td>
+<td>109.57</td>
+<td>152.87</td>
+<td>167.41</td>
+<td>124.65</td>
+<td>374.98</td>
+<td>414.50</td>
+<td>234.64</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-01-31</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3573.49</td>
-<td>689.18</td>
-<td>-3573.49</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>236.00</td>
+<td>415.06</td>
+<td>267.30</td>
+<td>106.83</td>
+<td>152.15</td>
+<td>165.99</td>
+<td>120.07</td>
+<td>371.44</td>
+<td>411.98</td>
+<td>237.68</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-03</td>
-<td>100</td>
-<td>-71129.49</td>
-<td>697.46</td>
-<td>-1383.49</td>
+<td>2402796.76</td>
+<td>1041</td>
+<td>860</td>
+<td>-1332</td>
+<td>-2002</td>
+<td>-2055</td>
+<td>-1447</td>
+<td>3358</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>228.01</td>
+<td>410.92</td>
+<td>266.81</td>
+<td>107.09</td>
+<td>151.87</td>
+<td>168.76</td>
+<td>116.66</td>
+<td>361.55</td>
+<td>408.76</td>
+<td>237.42</td>
+<td>-1012803.26</td>
+<td>1389993.50</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-02-04</td>
-<td>100</td>
-<td>-71129.49</td>
-<td>704.19</td>
-<td>-710.49</td>
+<td>1804242.94</td>
+<td>1041</td>
+<td>860</td>
+<td>-1332</td>
+<td>-2002</td>
+<td>-2055</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>232.80</td>
+<td>412.37</td>
+<td>267.94</td>
+<td>109.96</td>
+<td>153.49</td>
+<td>168.13</td>
+<td>118.65</td>
+<td>361.95</td>
+<td>411.49</td>
+<td>242.06</td>
+<td>-1416783.35</td>
+<td>387459.59</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-05</td>
-<td>100</td>
-<td>-71129.49</td>
-<td>704.87</td>
-<td>-642.49</td>
+<td>1403432.06</td>
+<td>1041</td>
+<td>860</td>
+<td>-1332</td>
+<td>-2002</td>
+<td>-2055</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>232.47</td>
+<td>413.29</td>
+<td>270.43</td>
+<td>109.88</td>
+<td>154.69</td>
+<td>169.01</td>
+<td>124.83</td>
+<td>358.85</td>
+<td>413.82</td>
+<td>236.17</td>
+<td>-1414403.65</td>
+<td>-10971.59</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-02-06</td>
-<td>100</td>
-<td>-71129.49</td>
-<td>711.99</td>
-<td>69.51</td>
+<td>1040475.38</td>
+<td>1041</td>
+<td>860</td>
+<td>0</td>
+<td>-2002</td>
+<td>-2055</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>233.22</td>
+<td>415.82</td>
+<td>276.90</td>
+<td>108.43</td>
+<td>153.51</td>
+<td>168.88</td>
+<td>128.68</td>
+<td>365.45</td>
+<td>414.16</td>
+<td>238.83</td>
+<td>-1054181.17</td>
+<td>-13705.79</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-07</td>
+<td>1403432.06</td>
+<td>1041</td>
+<td>860</td>
 <td>0</td>
-<td>1165.62</td>
-<td>714.52</td>
-<td>1165.62</td>
+<td>-2002</td>
+<td>-2055</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>227.63</td>
+<td>409.75</td>
+<td>275.80</td>
+<td>108.89</td>
+<td>153.12</td>
+<td>167.97</td>
+<td>129.84</td>
+<td>363.88</td>
+<td>407.37</td>
+<td>229.15</td>
+<td>-1044396.95</td>
+<td>359035.11</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-02-10</td>
-<td>-100</td>
-<td>73062.62</td>
-<td>717.40</td>
-<td>1322.62</td>
+<td>1181370.22</td>
+<td>1041</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>-2055</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>227.65</td>
+<td>412.22</td>
+<td>271.04</td>
+<td>110.97</td>
+<td>154.24</td>
+<td>167.53</td>
+<td>133.57</td>
+<td>363.22</td>
+<td>413.99</td>
+<td>233.14</td>
+<td>-835824.41</td>
+<td>345545.81</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-11</td>
-<td>-100</td>
-<td>73062.62</td>
-<td>719.80</td>
-<td>1082.62</td>
+<td>1403432.06</td>
+<td>1041</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>-2055</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>232.62</td>
+<td>411.44</td>
+<td>274.99</td>
+<td>111.67</td>
+<td>156.13</td>
+<td>169.43</td>
+<td>132.80</td>
+<td>362.23</td>
+<td>416.36</td>
+<td>232.76</td>
+<td>-838419.14</td>
+<td>565012.92</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-02-12</td>
-<td>-100</td>
-<td>73062.62</td>
-<td>725.38</td>
-<td>524.62</td>
+<td>1403432.06</td>
+<td>1041</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>-2055</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>236.87</td>
+<td>409.04</td>
+<td>275.45</td>
+<td>107.35</td>
+<td>155.26</td>
+<td>169.58</td>
+<td>131.14</td>
+<td>352.04</td>
+<td>407.14</td>
+<td>228.93</td>
+<td>-815686.39</td>
+<td>587745.67</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-13</td>
-<td>-100</td>
-<td>73062.62</td>
-<td>728.56</td>
-<td>206.62</td>
+<td>1328531.24</td>
+<td>0</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>241.53</td>
+<td>410.54</td>
+<td>276.32</td>
+<td>108.13</td>
+<td>157.25</td>
+<td>171.02</td>
+<td>135.29</td>
+<td>353.70</td>
+<td>412.43</td>
+<td>230.37</td>
+<td>-750897.97</td>
+<td>577633.27</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-02-14</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-604.38</td>
-<td>736.67</td>
-<td>-604.38</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>-1424</td>
+<td>244.60</td>
+<td>408.43</td>
+<td>276.59</td>
+<td>108.24</td>
+<td>156.15</td>
+<td>162.89</td>
+<td>138.85</td>
+<td>353.32</td>
+<td>409.50</td>
+<td>228.68</td>
+<td>-736220.89</td>
+<td>667211.17</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-18</td>
-<td>100</td>
-<td>-74237.38</td>
-<td>716.37</td>
-<td>-2600.38</td>
+<td>1083943.42</td>
+<td>0</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-1447</td>
+<td>0</td>
+<td>-672</td>
+<td>-705</td>
+<td>0</td>
+<td>244.47</td>
+<td>409.64</td>
+<td>279.95</td>
+<td>110.14</td>
+<td>154.99</td>
+<td>165.43</td>
+<td>139.40</td>
+<td>354.00</td>
+<td>403.31</td>
+<td>226.65</td>
+<td>-409308.36</td>
+<td>674635.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-02-19</td>
-<td>100</td>
-<td>-74237.38</td>
-<td>703.77</td>
-<td>-3860.38</td>
+<td>1167869.18</td>
+<td>0</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-1447</td>
+<td>0</td>
+<td>0</td>
+<td>-705</td>
+<td>0</td>
+<td>244.87</td>
+<td>414.77</td>
+<td>279.25</td>
+<td>110.30</td>
+<td>157.89</td>
+<td>166.49</td>
+<td>139.23</td>
+<td>353.00</td>
+<td>395.43</td>
+<td>226.63</td>
+<td>-162986.98</td>
+<td>1004882.20</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-20</td>
-<td>100</td>
-<td>-74237.38</td>
-<td>694.84</td>
-<td>-4753.38</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-1447</td>
+<td>0</td>
+<td>0</td>
+<td>-705</td>
+<td>0</td>
+<td>245.83</td>
+<td>416.13</td>
+<td>266.80</td>
+<td>112.00</td>
+<td>159.68</td>
+<td>167.21</td>
+<td>140.11</td>
+<td>349.15</td>
+<td>394.64</td>
+<td>222.88</td>
+<td>-162302.27</td>
+<td>1241129.79</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-02-21</td>
+<td>1128171.86</td>
 <td>0</td>
-<td>-5882.38</td>
-<td>683.55</td>
-<td>-5882.38</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-1447</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>245.55</td>
+<td>408.21</td>
+<td>264.24</td>
+<td>110.69</td>
+<td>162.30</td>
+<td>170.23</td>
+<td>134.43</td>
+<td>340.04</td>
+<td>385.30</td>
+<td>216.58</td>
+<td>104737.79</td>
+<td>1232909.65</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-24</td>
+<td>1154866.40</td>
 <td>0</td>
-<td>-3522.90</td>
-<td>668.13</td>
-<td>-3522.90</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>247.10</td>
+<td>404.00</td>
+<td>261.34</td>
+<td>111.27</td>
+<td>163.74</td>
+<td>170.54</td>
+<td>130.28</td>
+<td>338.92</td>
+<td>382.42</td>
+<td>212.71</td>
+<td>347440.00</td>
+<td>1502306.40</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-02-25</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3522.90</td>
-<td>657.50</td>
-<td>-3522.90</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>247.04</td>
+<td>397.90</td>
+<td>257.40</td>
+<td>109.73</td>
+<td>166.09</td>
+<td>172.65</td>
+<td>126.63</td>
+<td>342.36</td>
+<td>393.29</td>
+<td>212.80</td>
+<td>342194.00</td>
+<td>1745626.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-26</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3522.90</td>
-<td>673.70</td>
-<td>-3522.90</td>
+<td>860</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>240.36</td>
+<td>399.73</td>
+<td>258.79</td>
+<td>109.46</td>
+<td>163.08</td>
+<td>171.30</td>
+<td>131.28</td>
+<td>342.58</td>
+<td>390.48</td>
+<td>214.35</td>
+<td>343767.80</td>
+<td>1747199.86</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-02-27</td>
+<td>1743149.26</td>
 <td>0</td>
-<td>-3522.90</td>
-<td>658.24</td>
-<td>-3522.90</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>237.30</td>
+<td>392.53</td>
+<td>259.05</td>
+<td>110.15</td>
+<td>163.73</td>
+<td>171.97</td>
+<td>120.15</td>
+<td>340.00</td>
+<td>390.27</td>
+<td>208.74</td>
+<td>0.00</td>
+<td>1743149.26</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-02-28</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-3522.90</td>
-<td>668.20</td>
-<td>-3522.90</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>241.84</td>
+<td>396.99</td>
+<td>264.65</td>
+<td>111.33</td>
+<td>165.02</td>
+<td>173.84</td>
+<td>124.92</td>
+<td>343.95</td>
+<td>396.60</td>
+<td>212.28</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-03</td>
-<td>-100</td>
-<td>63845.10</td>
-<td>655.05</td>
-<td>-1659.90</td>
+<td>924099.44</td>
+<td>-2162</td>
+<td>1334</td>
+<td>1807</td>
+<td>-3778</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>1425</td>
+<td>1363</td>
+<td>2539</td>
+<td>238.03</td>
+<td>388.49</td>
+<td>260.62</td>
+<td>107.76</td>
+<td>167.28</td>
+<td>175.59</td>
+<td>114.06</td>
+<td>332.04</td>
+<td>389.69</td>
+<td>205.02</td>
+<td>384683.21</td>
+<td>1308782.65</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-04</td>
+<td>2820848.15</td>
+<td>-2162</td>
+<td>1334</td>
 <td>0</td>
-<td>-245.53</td>
-<td>640.00</td>
-<td>-245.53</td>
+<td>-3778</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>1363</td>
+<td>0</td>
+<td>235.93</td>
+<td>388.61</td>
+<td>250.25</td>
+<td>107.54</td>
+<td>165.42</td>
+<td>173.18</td>
+<td>115.99</td>
+<td>326.75</td>
+<td>381.68</td>
+<td>203.80</td>
+<td>-1070250.12</td>
+<td>1750598.03</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-05</td>
+<td>1005910.90</td>
+<td>-2162</td>
+<td>1334</td>
 <td>0</td>
-<td>-245.53</td>
-<td>656.47</td>
-<td>-245.53</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>1363</td>
+<td>0</td>
+<td>235.74</td>
+<td>401.02</td>
+<td>251.53</td>
+<td>105.44</td>
+<td>165.12</td>
+<td>174.61</td>
+<td>117.30</td>
+<td>338.49</td>
+<td>386.35</td>
+<td>208.36</td>
+<td>-644829.25</td>
+<td>361081.65</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-06</td>
+<td>1403432.06</td>
+<td>-2162</td>
+<td>1334</td>
 <td>0</td>
-<td>-245.53</td>
-<td>627.93</td>
-<td>-245.53</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>1363</td>
+<td>0</td>
+<td>235.33</td>
+<td>396.89</td>
+<td>246.54</td>
+<td>107.62</td>
+<td>165.83</td>
+<td>174.66</td>
+<td>110.57</td>
+<td>341.01</td>
+<td>381.73</td>
+<td>200.70</td>
+<td>-658339.93</td>
+<td>745092.13</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-07</td>
+<td>1913712.00</td>
+<td>-2162</td>
+<td>1334</td>
 <td>0</td>
-<td>-245.53</td>
-<td>625.66</td>
-<td>-245.53</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>239.07</td>
+<td>393.31</td>
+<td>242.28</td>
+<td>109.02</td>
+<td>166.69</td>
+<td>175.95</td>
+<td>112.69</td>
+<td>350.30</td>
+<td>376.80</td>
+<td>199.25</td>
+<td>-1199119.98</td>
+<td>714592.02</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-10</td>
-<td>100</td>
-<td>-61052.53</td>
-<td>597.99</td>
-<td>-1253.53</td>
+<td>914409.28</td>
+<td>0</td>
+<td>1334</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>227.48</td>
+<td>380.16</td>
+<td>232.22</td>
+<td>111.80</td>
+<td>167.70</td>
+<td>176.26</td>
+<td>106.98</td>
+<td>345.21</td>
+<td>374.65</td>
+<td>194.54</td>
+<td>-704348.92</td>
+<td>210060.36</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-11</td>
-<td>100</td>
-<td>-61052.53</td>
-<td>605.71</td>
-<td>-481.53</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>1334</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>220.84</td>
+<td>380.45</td>
+<td>229.14</td>
+<td>109.16</td>
+<td>165.86</td>
+<td>173.12</td>
+<td>108.76</td>
+<td>339.77</td>
+<td>368.16</td>
+<td>196.59</td>
+<td>-686272.34</td>
+<td>717159.72</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-12</td>
-<td>100</td>
-<td>-61052.53</td>
-<td>619.56</td>
-<td>903.47</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>1334</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>216.98</td>
+<td>383.27</td>
+<td>227.90</td>
+<td>109.13</td>
+<td>162.85</td>
+<td>168.37</td>
+<td>115.74</td>
+<td>338.13</td>
+<td>364.73</td>
+<td>198.89</td>
+<td>-654982.04</td>
+<td>748450.02</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-13</td>
-<td>100</td>
-<td>-61052.53</td>
-<td>590.64</td>
-<td>-1988.53</td>
+<td>1907670.72</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>209.68</td>
+<td>378.77</td>
+<td>225.19</td>
+<td>108.67</td>
+<td>162.99</td>
+<td>168.59</td>
+<td>115.58</td>
+<td>333.31</td>
+<td>347.25</td>
+<td>193.89</td>
+<td>-1167541.22</td>
+<td>740129.50</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-14</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>-292.53</td>
-<td>607.60</td>
-<td>-292.53</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>213.49</td>
+<td>388.56</td>
+<td>232.44</td>
+<td>111.90</td>
+<td>162.81</td>
+<td>167.97</td>
+<td>121.67</td>
+<td>339.64</td>
+<td>351.31</td>
+<td>197.95</td>
+<td>-1164670.14</td>
+<td>238761.92</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-17</td>
-<td>-100</td>
-<td>60479.47</td>
-<td>604.90</td>
-<td>-10.53</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>214.00</td>
+<td>388.70</td>
+<td>233.93</td>
+<td>113.76</td>
+<td>162.84</td>
+<td>169.76</td>
+<td>119.53</td>
+<td>342.64</td>
+<td>354.13</td>
+<td>195.74</td>
+<td>-1171298.24</td>
+<td>232133.82</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-18</td>
-<td>-100</td>
-<td>60479.47</td>
-<td>582.36</td>
-<td>2243.47</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>212.69</td>
+<td>383.52</td>
+<td>234.97</td>
+<td>113.64</td>
+<td>164.25</td>
+<td>167.71</td>
+<td>115.43</td>
+<td>336.71</td>
+<td>349.57</td>
+<td>192.82</td>
+<td>-1168606.66</td>
+<td>234825.40</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-19</td>
-<td>-100</td>
-<td>60479.47</td>
-<td>584.06</td>
-<td>2073.47</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>215.24</td>
+<td>387.82</td>
+<td>239.11</td>
+<td>115.41</td>
+<td>162.99</td>
+<td>168.57</td>
+<td>117.52</td>
+<td>338.62</td>
+<td>353.42</td>
+<td>195.54</td>
+<td>-1167468.30</td>
+<td>235963.76</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-20</td>
-<td>-100</td>
-<td>60479.47</td>
-<td>586.00</td>
-<td>1879.47</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>214.10</td>
+<td>386.84</td>
+<td>239.01</td>
+<td>115.90</td>
+<td>163.02</td>
+<td>167.55</td>
+<td>118.53</td>
+<td>336.25</td>
+<td>355.52</td>
+<td>194.95</td>
+<td>-1163851.14</td>
+<td>239580.92</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-21</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>854.47</td>
-<td>596.25</td>
-<td>854.47</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>218.27</td>
+<td>391.26</td>
+<td>241.63</td>
+<td>115.50</td>
+<td>163.63</td>
+<td>166.69</td>
+<td>117.70</td>
+<td>335.78</td>
+<td>351.15</td>
+<td>196.21</td>
+<td>-1162784.70</td>
+<td>240647.36</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-24</td>
-<td>-100</td>
-<td>62351.47</td>
-<td>618.85</td>
-<td>466.47</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>-3646</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>220.73</td>
+<td>393.08</td>
+<td>248.06</td>
+<td>115.80</td>
+<td>163.29</td>
+<td>165.65</td>
+<td>121.41</td>
+<td>341.67</td>
+<td>363.77</td>
+<td>203.26</td>
+<td>-1157839.58</td>
+<td>245592.48</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-25</td>
-<td>-100</td>
-<td>62351.47</td>
-<td>626.31</td>
-<td>-279.53</td>
+<td>808696.54</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>223.75</td>
+<td>395.16</td>
+<td>251.13</td>
+<td>116.59</td>
+<td>161.02</td>
+<td>162.85</td>
+<td>120.69</td>
+<td>342.62</td>
+<td>360.99</td>
+<td>205.71</td>
+<td>-546179.84</td>
+<td>262516.70</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-26</td>
-<td>-100</td>
-<td>62351.47</td>
-<td>610.98</td>
-<td>1253.47</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>221.53</td>
+<td>389.97</td>
+<td>251.03</td>
+<td>118.27</td>
+<td>161.72</td>
+<td>166.58</td>
+<td>113.76</td>
+<td>341.11</td>
+<td>362.13</td>
+<td>201.13</td>
+<td>-548554.24</td>
+<td>854877.82</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-27</td>
-<td>-100</td>
-<td>62351.47</td>
-<td>602.58</td>
-<td>2093.47</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>223.85</td>
+<td>390.58</td>
+<td>248.12</td>
+<td>117.89</td>
+<td>163.13</td>
+<td>168.71</td>
+<td>111.43</td>
+<td>339.30</td>
+<td>362.73</td>
+<td>201.36</td>
+<td>-553336.96</td>
+<td>850095.10</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-03-28</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>4494.95</td>
-<td>576.74</td>
-<td>4494.95</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>-3392</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>217.90</td>
+<td>378.80</td>
+<td>242.85</td>
+<td>117.73</td>
+<td>163.71</td>
+<td>168.03</td>
+<td>109.67</td>
+<td>329.69</td>
+<td>358.15</td>
+<td>192.72</td>
+<td>-555304.32</td>
+<td>848127.74</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-03-31</td>
-<td>100</td>
-<td>-51855.05</td>
-<td>576.36</td>
-<td>5780.95</td>
+<td>840902.78</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>222.13</td>
+<td>375.39</td>
+<td>245.30</td>
+<td>118.93</td>
+<td>165.84</td>
+<td>170.42</td>
+<td>108.38</td>
+<td>329.80</td>
+<td>366.49</td>
+<td>190.26</td>
+<td>0.00</td>
+<td>840902.78</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-04-01</td>
+<td>977759.98</td>
+<td>3854</td>
+<td>2126</td>
+<td>-2095</td>
+<td>-8672</td>
 <td>0</td>
-<td>6572.81</td>
-<td>586.00</td>
-<td>6572.81</td>
+<td>4570</td>
+<td>10308</td>
+<td>-2591</td>
+<td>-1861</td>
+<td>0</td>
+<td>223.19</td>
+<td>382.19</td>
+<td>243.66</td>
+<td>119.04</td>
+<td>153.25</td>
+<td>170.56</td>
+<td>110.15</td>
+<td>330.57</td>
+<td>365.52</td>
+<td>192.17</td>
+<td>508073.43</td>
+<td>1485833.41</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-04-02</td>
+<td>3366751.14</td>
+<td>3854</td>
 <td>0</td>
-<td>6572.81</td>
-<td>583.93</td>
-<td>6572.81</td>
+<td>-2095</td>
+<td>-8672</td>
+<td>0</td>
+<td>4570</td>
+<td>0</td>
+<td>-2591</td>
+<td>-1861</td>
+<td>0</td>
+<td>223.89</td>
+<td>382.14</td>
+<td>245.82</td>
+<td>118.67</td>
+<td>155.36</td>
+<td>169.50</td>
+<td>110.42</td>
+<td>334.66</td>
+<td>370.89</td>
+<td>196.01</td>
+<td>-1463942.43</td>
+<td>1902808.71</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-04-03</td>
+<td>-765882.87</td>
 <td>0</td>
-<td>6572.81</td>
-<td>531.62</td>
-<td>6572.81</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>4570</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>203.19</td>
+<td>373.11</td>
+<td>228.69</td>
+<td>112.43</td>
+<td>159.82</td>
+<td>172.39</td>
+<td>101.80</td>
+<td>305.76</td>
+<td>355.91</td>
+<td>178.41</td>
+<td>787822.30</td>
+<td>21939.43</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-04-04</td>
+<td>2163788.66</td>
 <td>0</td>
-<td>6572.81</td>
-<td>504.73</td>
-<td>6572.81</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>188.38</td>
+<td>359.84</td>
+<td>210.28</td>
+<td>104.34</td>
+<td>153.24</td>
+<td>163.75</td>
+<td>94.31</td>
+<td>288.08</td>
+<td>353.90</td>
+<td>171.00</td>
+<td>0.00</td>
+<td>2163788.66</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-04-07</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>10978.06</td>
-<td>516.25</td>
-<td>10978.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>181.46</td>
+<td>357.86</td>
+<td>214.44</td>
+<td>102.94</td>
+<td>150.62</td>
+<td>160.23</td>
+<td>97.64</td>
+<td>280.06</td>
+<td>341.51</td>
+<td>175.26</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-04-08</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>10978.06</td>
-<td>510.45</td>
-<td>10978.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>172.42</td>
+<td>354.56</td>
+<td>216.87</td>
+<td>100.77</td>
+<td>150.00</td>
+<td>158.39</td>
+<td>96.30</td>
+<td>273.94</td>
+<td>335.24</td>
+<td>170.66</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-04-09</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>10978.06</td>
-<td>585.77</td>
-<td>10978.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>198.85</td>
+<td>390.49</td>
+<td>234.34</td>
+<td>105.80</td>
+<td>150.97</td>
+<td>162.32</td>
+<td>114.33</td>
+<td>301.01</td>
+<td>355.39</td>
+<td>191.10</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-04-10</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>10978.06</td>
-<td>546.29</td>
-<td>10978.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>190.42</td>
+<td>381.35</td>
+<td>227.11</td>
+<td>99.93</td>
+<td>148.69</td>
+<td>163.56</td>
+<td>107.57</td>
+<td>289.16</td>
+<td>353.62</td>
+<td>181.22</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2025-04-11</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>10978.06</td>
-<td>543.57</td>
-<td>10978.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>198.15</td>
+<td>388.45</td>
+<td>236.20</td>
+<td>103.14</td>
+<td>151.73</td>
+<td>166.91</td>
+<td>110.93</td>
+<td>293.45</td>
+<td>353.86</td>
+<td>184.87</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2025-04-14</td>
-<td>-100</td>
-<td>66596.06</td>
-<td>531.48</td>
-<td>13448.06</td>
-</tr>
-<tr class="odd">
-<td>2025-04-15</td>
-<td>-100</td>
-<td>66596.06</td>
-<td>521.52</td>
-<td>14444.06</td>
-</tr>
-<tr class="even">
-<td>2025-04-16</td>
-<td>-100</td>
-<td>66596.06</td>
-<td>502.31</td>
-<td>16365.06</td>
-</tr>
-<tr class="odd">
-<td>2025-04-17</td>
+<td>1403432.06</td>
 <td>0</td>
-<td>16448.06</td>
-<td>501.48</td>
-<td>16448.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>202.52</td>
+<td>387.81</td>
+<td>234.72</td>
+<td>103.39</td>
+<td>154.36</td>
+<td>169.13</td>
+<td>110.71</td>
+<td>298.12</td>
+<td>357.20</td>
+<td>182.12</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
 <tr class="even">
+<td>2025-04-15</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>202.14</td>
+<td>385.73</td>
+<td>233.13</td>
+<td>103.10</td>
+<td>153.62</td>
+<td>168.47</td>
+<td>112.20</td>
+<td>293.43</td>
+<td>354.11</td>
+<td>179.59</td>
+<td>0.00</td>
+<td>1403432.06</td>
+</tr>
+<tr class="odd">
+<td>2025-04-16</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>194.27</td>
+<td>371.61</td>
+<td>229.61</td>
+<td>104.19</td>
+<td>153.91</td>
+<td>166.39</td>
+<td>104.49</td>
+<td>290.14</td>
+<td>345.99</td>
+<td>174.33</td>
+<td>0.00</td>
+<td>1403432.06</td>
+</tr>
+<tr class="even">
+<td>2025-04-17</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>196.98</td>
+<td>367.78</td>
+<td>231.96</td>
+<td>106.92</td>
+<td>157.47</td>
+<td>170.63</td>
+<td>101.49</td>
+<td>294.25</td>
+<td>355.06</td>
+<td>172.61</td>
+<td>0.00</td>
+<td>1403432.06</td>
+</tr>
+<tr class="odd">
 <td>2025-04-21</td>
-<td>100</td>
-<td>-32684.94</td>
-<td>484.66</td>
-<td>15781.06</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>193.16</td>
+<td>359.12</td>
+<td>228.99</td>
+<td>105.35</td>
+<td>156.92</td>
+<td>165.75</td>
+<td>96.91</td>
+<td>284.74</td>
+<td>346.90</td>
+<td>167.32</td>
+<td>0.00</td>
+<td>1403432.06</td>
+</tr>
+<tr class="even">
+<td>2025-04-22</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>199.74</td>
+<td>366.82</td>
+<td>235.59</td>
+<td>108.30</td>
+<td>157.75</td>
+<td>167.88</td>
+<td>98.89</td>
+<td>291.17</td>
+<td>354.43</td>
+<td>173.18</td>
+<td>0.00</td>
+<td>1403432.06</td>
+</tr>
+<tr class="odd">
+<td>2025-04-23</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>204.60</td>
+<td>374.39</td>
+<td>240.88</td>
+<td>107.37</td>
+<td>155.38</td>
+<td>165.73</td>
+<td>102.71</td>
+<td>295.77</td>
+<td>356.42</td>
+<td>180.60</td>
+<td>0.00</td>
+<td>1403432.06</td>
+</tr>
+<tr class="even">
+<td>2025-04-24</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>208.37</td>
+<td>387.30</td>
+<td>244.64</td>
+<td>108.63</td>
+<td>154.93</td>
+<td>159.53</td>
+<td>106.43</td>
+<td>306.86</td>
+<td>359.64</td>
+<td>186.54</td>
+<td>0.00</td>
+<td>1403432.06</td>
+</tr>
+<tr class="odd">
+<td>2025-04-25</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>209.28</td>
+<td>391.85</td>
+<td>243.55</td>
+<td>108.57</td>
+<td>154.58</td>
+<td>161.02</td>
+<td>111.01</td>
+<td>306.45</td>
+<td>357.58</td>
+<td>188.99</td>
+<td>0.00</td>
+<td>1403432.06</td>
+</tr>
+<tr class="even">
+<td>2025-04-28</td>
+<td>1403432.06</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>210.14</td>
+<td>391.16</td>
+<td>243.22</td>
+<td>108.63</td>
+<td>155.35</td>
+<td>161.85</td>
+<td>108.73</td>
+<td>307.06</td>
+<td>356.92</td>
+<td>187.70</td>
+<td>0.00</td>
+<td>1403432.06</td>
 </tr>
 </tbody>
 </table>
@@ -1837,6 +4007,42 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+</section>
+<section id="end-of-day-portfolio-market-value" class="level4">
+<h4 class="anchored" data-anchor-id="end-of-day-portfolio-market-value">End of Day Portfolio Market Value</h4>
+<div class="{html}">
+<div id="portfolio-chart" style="height:400px;">
+
+</div>
+<script>
+  // 给 Plotly 一个挂载点和布局配置
+  Plotly.newPlot(
+    'portfolio-chart',
+    [ portfolioTrace ],
+    {
+      title: 'End of Day Portfolio Market Value',
+      xaxis: {
+        title: 'Date',
+        rangeslider: { visible: true },
+        rangeselector: {
+          buttons: [
+            { count: 7,  label: '1w', step: 'day',   stepmode: 'backward' },
+            { count: 1,  label: '1m', step: 'month', stepmode: 'backward' },
+            { count: 3,  label: '3m', step: 'month', stepmode: 'backward' },
+            { count: 6,  label: '6m', step: 'month', stepmode: 'backward' },
+            { step: 'all', label: 'All' }
+          ]
+        },
+        type: 'date'
+      },
+      yaxis: { title: 'Market Value ($)' },
+      hovermode: 'closest',
+      showlegend: false,
+      margin: { t: 30, b: 50, l: 50, r: 30 }
+    }
+  );
+</script>
+</div>
 
 
 </section>

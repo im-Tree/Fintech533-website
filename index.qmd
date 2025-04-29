@@ -7,17 +7,21 @@ format:
     toc: true
     include-in-header:
       - text: |
-          <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+          <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
           <script src="static/price_data.js"></script>
+resources:
+  - static/price_data.js
+  - static/ledger.csv
 params:
   ticker: "AAPL"
 editor: visual
 ---
 
+
 ### Mean Reversion Strategy
 
 #### 1. Strategy Overview
-Mean reversion: Since the stocks in the portfolio all come from representative large companies and have high liquidity. The prices of these stocks usually do not fluctuate sharply. Therefore, we formulate the mean reversion strategy, expecting the stock price to pull back when the stock price is high and short selling. When the stock price is low, it is expected to rebound.
+**Mean reversion**: Since the stocks in the portfolio all come from representative large companies and have high liquidity. The prices of these stocks usually do not fluctuate sharply. Therefore, we formulate the mean reversion strategy, expecting the stock price to pull back when the stock price is high and short selling. When the stock price is low, it is expected to rebound.
 
 #### 2. Portfolio Choice
 We selected these 10 stocks for their strong **sector representation**, **high liquidity**, and **market relevance**. Each stock comes from a different major industry, ensuring diversification and reducing sector-specific risk. As large-cap, actively traded companies, they offer reliable data and efficient execution,.
@@ -41,67 +45,10 @@ df.index = df.index + 1
 df
 ```
 
-### 📊View Last Month’s Stock Price
-
-
-<h4>🔽 Choose a Stock:</h4>
-
-<select id="stock-selector">
-  <option value="AAPL">AAPL</option>
-  <option value="MSFT">MSFT</option>
-  <option value="JPM">JPM</option>
-  <option value="XOM">XOM</option>
-  <option value="JNJ">JNJ</option>
-  <option value="PG">PG</option>
-  <option value="NVDA">NVDA</option>
-  <option value="CAT">CAT</option>
-  <option value="HD">HD</option>
-  <option value="AMZN">AMZN</option>
-</select>
-
-<div id="plotly-container" style="height: 500px;"></div>
-
-<script>
-function plotStock(ticker) {
-  const data = priceData[ticker];
-  if (!data || data.length === 0) {
-    document.getElementById('plotly-container').innerHTML = "<p>No data available for " + ticker + ".</p>";
-    return;
-  }
-
-  const trace = {
-    x: data.map(d => d.Date),
-    y: data.map(d => d.Close),
-    mode: 'lines+markers',
-    name: ticker,
-    line: { color: '#1f77b4' }
-  };
-  const layout = {
-    title: `${ticker} - Last Month Closing Prices`,
-    xaxis: { title: 'Date' },
-    yaxis: { title: 'Price (USD)' }
-  };
-  Plotly.newPlot('plotly-container', [trace], layout);
-}
-
-window.addEventListener("load", function () {
-  plotStock("AAPL");
-
-  document.getElementById("stock-selector").addEventListener("change", function () {
-    plotStock(this.value);
-  });
-});
-</script>
-
-
-
-
-
-
-
 
 #### 3. Adjustment Method
-Monthly portfolio adjustment + take-profit and stop-loss (Each stock is closed when it meets the take-profit and stop-loss conditions before the next portfolio adjustment to obtain cash and earn a risk-free interest rate)
+**monthly portfolio adjustment** & **stop-loss and take-profit**
+(Each stock is closed when it meets the take-profit and stop-loss conditions before the next portfolio adjustment to obtain cash and earn a risk-free interest rate)
 
 ### Scoring System
 #### 1. Technical Indicator Scoring System
@@ -129,8 +76,8 @@ df_ema = pd.DataFrame({
         "–1% – 0%",
         "> 0%"
     ],
-    "Short Score": [5, 4, 3, 2, 0, "-", "-", "-", "-", "-"],
-    "Long Score": ["-", "-", "-", "-", "-", 5, 4, 3, 2, 0]
+    "Short Score": [5, 4, 3, 2, 0, 0, 0, 0, 0, 0],
+    "Long Score": [0, 0, 0, 0, 0, 5, 4, 3, 2, 0]
 })
 
 df_ema.index = df_ema.index + 1
@@ -153,16 +100,14 @@ df_macd = pd.DataFrame({
         "+0.5 – +1.0",
         "+0.1 – +0.5",
         "0 – +0.1",
-        "≤ 0",
-        "< –1.5",
-        "–1.5 – –1.0",
-        "–1.0 – –0.5",
-        "–0.5 – –0.1",
         "–0.1 – 0",
-        "≥ 0"
+        "–0.5 – –0.1",
+        "–1.0 – –0.5",
+        "–1.5 – –1.0",
+        "< –1.5"
     ],
-    "Short Score": [5, 4, 3, 2, 1, 0, "-", "-", "-", "-", "-", "-"],
-    "Long Score": ["-", "-", "-", "-", "-", "-", 5, 4, 3, 2, 1, 0]
+    "Short Score": [5, 4, 3, 2, 1, 0, 0, 0, 0, 0],
+    "Long Score": [0, 0, 0, 0, 0, 1, 2, 3, 4, 5]
 })
 
 df_macd.index = df_macd.index + 1
@@ -301,8 +246,8 @@ df_yield
 
 For each stock, we compute both long and short scores:
 
-- **Total_Long** = EMA_long + MACD_long + ADX + ATR
-- **Total_Short** = EMA_short + MACD_short + ADX + ATR
+- **Total_Long** = 0.25 * EMA_long + 0.25 * MACD_long + 0.1 * ADX + 0.1 * ATR + 0.15 * iv_long + 0.15 * yield_spread_long
+- **Total_Short** = 0.25 * EMA_short + 0.25 * MACD_short + 0.1 * ADX + 0.1 * ATR + 0.15 * iv_short + 0.15 * yield_spread_short
 
 We compare the two totals and select the side with the higher score as the **trading direction** (long or short).
 
@@ -317,7 +262,7 @@ Once the direction is determined for each stock, we normalize scores within each
   - Short positions receive **negative weights**
 
 - **Weight Meaning**:
-  The final weight represents **capital allocation ratio** in the portfolio, subject to risk constraints.
+  The final weight represents **capital allocation ratio** in the portfolio.
 
 
 ### Strategy Outcome
@@ -334,8 +279,8 @@ It will display results such as:
 
 #### **Blotter**
 
-<h4>🔍 Search by Date:</h4>
-<input type="text" id="blotter-search" placeholder="e.g., 2025-04-15" style="padding: 5px; margin-bottom: 10px; width: 200px;" />
+<h4>Search by Trading Period:</h4>
+<input type="text" id="blotter-search" placeholder="e.g., 2025.01" style="padding: 5px; margin-bottom: 10px; width: 200px;" />
 
 <div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
 ```{python}
@@ -370,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 #### **Ledger**
 
-<h4>🔍 Search Ledger by Date:</h4>
+<h4>Search Ledger by Date:</h4>
 <input type="text" id="ledger-search" placeholder="e.g., 2025-04-15" style="padding: 5px; margin-bottom: 10px; width: 200px;" />
 
 <div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
