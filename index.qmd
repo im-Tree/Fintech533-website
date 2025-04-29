@@ -9,9 +9,6 @@ format:
       - text: |
           <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
           <script src="static/price_data.js"></script>
-resources:
-  - static/price_data.js
-  - static/ledger.csv
 params:
   ticker: "AAPL"
 editor: visual
