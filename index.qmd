@@ -404,6 +404,8 @@ html_performance = performance_df.to_html(index=False, table_id="performance-tab
 from IPython.display import display, HTML
 display(HTML(html_performance))
 ```
+**p.s.** The reason of high average number of trades per year(240) is that there are 10 stocks in our portfolio, and we execute one buy and one sell trade per stock per month.
+But for each stock, the average number of trades per year is 24.
 
 #### **Performance Analysis**
 
