@@ -1,0 +1,9 @@
+﻿Metrics,Original,After Controlling Lever
+alpha(benchmark: S&P 500),-0.13%,0.01%
+beta(benchmark: S&P 500),0.32,0.06
+Cumulative Return,-16.48%,0.89%
+Geometric Mean Return,-31.06%,1.84%
+Average Return per Trade,-0.27%,0.01%
+Annualized Volatility,27.28%,6.76%
+Sharpe Ratio(rf=0.046),-1.14,0.27
+Max Drawdown,26.63%,5.72%

@@ -8,20 +8,24 @@ format:
     include-in-header:
       - text: |
           <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
-          <script src="static/price_data.js"></script>
 params:
   ticker: "AAPL"
 editor: visual
 ---
 
-
 ### Mean Reversion Strategy
 
 #### 1. Strategy Overview
-**Mean reversion**: Since the stocks in the portfolio all come from representative large companies and have high liquidity. The prices of these stocks usually do not fluctuate sharply. Therefore, we formulate the mean reversion strategy, expecting the stock price to pull back when the stock price is high and short selling. When the stock price is low, it is expected to rebound.
+This strategy is based on **mean reversion**, under the assumption that prices of large-cap, liquid stocks tend to revert to their average levels. When prices deviate significantly from the mean, they are expected to revert:
+- **Go long** when prices are abnormally low and expected to rebound.
+- **Go short** when prices are abnormally high and expected to pull back.
+
+In addition, we are interested in studying how **leverage control** affects strategy performance. Without constraint, excessive leverage may amplify returns in the short term, but it can also lead to extreme losses and unstable drawdowns, especially when signals are weak or noisy. Therefore, we compare the performance of the strategy **with and without leverage control**.
+
+---
 
 #### 2. Portfolio Choice
-We selected these 10 stocks for their strong **sector representation**, **high liquidity**, and **market relevance**. Each stock comes from a different major industry, ensuring diversification and reducing sector-specific risk. As large-cap, actively traded companies, they offer reliable data and efficient execution,.
+We selected these 10 stocks for their strong **sector representation**, **high liquidity**, and **market relevance**. Each stock comes from a different major industry, ensuring diversification and reducing sector-specific risk.
 
 ```{python}
 #| echo: false
@@ -42,44 +46,37 @@ df.index = df.index + 1
 df
 ```
 
+---
 
 #### 3. Adjustment Method
-**monthly portfolio adjustment** & **stop-loss and take-profit**
-(Each stock is closed when it meets the take-profit and stop-loss conditions before the next portfolio adjustment to obtain cash and earn a risk-free interest rate)
+- **Monthly portfolio adjustment** based on re-ranking of stocks.
+- **Stop-loss and take-profit mechanism**: Each stock position is monitored during the holding month and is closed early if either a stop-loss or take-profit threshold is reached. If no trigger is hit, the stock is force-closed at the end of the month.
+
+---
 
 ### Scoring System
-#### 1. Technical Indicator Scoring System
 
-Each stock is scored for both long and short setups based on:
+#### 1. Technical Indicator Scoring System
+Each stock is scored for both long and short setups based on the following indicators:
 
 ##### 1.1 EMA Deviation (Delta) Calculation
-
 The **EMA deviation** measures how far the current price is from its 20-day Exponential Moving Average (EMA). It is calculated as:
 `Δ = 100% × (Close − EMA₍₂₀₎) / EMA₍₂₀₎`
+
 ```{python}
 #| echo: false
 import pandas as pd
 
 df_ema = pd.DataFrame({
     "Δ Range": [
-        "> +5%",
-        "+3% – +5%",
-        "+1% – +3%",
-        "0 – +1%",
-        "< 0%",
-        "< –5%",
-        "–5% – –3%",
-        "–3% – –1%",
-        "–1% – 0%",
-        "> 0%"
+        "> +5%", "+3% – +5%", "+1% – +3%", "0 – +1%", "< 0%",
+        "< –5%", "–5% – –3%", "–3% – –1%", "–1% – 0%", "> 0%"
     ],
     "Short Score": [5, 4, 3, 2, 0, 0, 0, 0, 0, 0],
     "Long Score": [0, 0, 0, 0, 0, 5, 4, 3, 2, 0]
 })
-
 df_ema.index = df_ema.index + 1
 df_ema
-
 ```
 
 ##### 1.2 MACD (Moving Average Convergence Divergence)
@@ -92,40 +89,23 @@ import pandas as pd
 
 df_macd = pd.DataFrame({
     "MACD_diff Range": [
-        "> +1.5",
-        "+1.0 – +1.5",
-        "+0.5 – +1.0",
-        "+0.1 – +0.5",
-        "0 – +0.1",
-        "–0.1 – 0",
-        "–0.5 – –0.1",
-        "–1.0 – –0.5",
-        "–1.5 – –1.0",
-        "< –1.5"
+        "> +1.5", "+1.0 – +1.5", "+0.5 – +1.0", "+0.1 – +0.5", "0 – +0.1",
+        "–0.1 – 0", "–0.5 – –0.1", "–1.0 – –0.5", "–1.5 – –1.0", "< –1.5"
     ],
     "Short Score": [5, 4, 3, 2, 1, 0, 0, 0, 0, 0],
     "Long Score": [0, 0, 0, 0, 0, 1, 2, 3, 4, 5]
 })
-
 df_macd.index = df_macd.index + 1
 df_macd
 ```
 
 ##### 1.3 ADX (Average Directional Index)
-The reversal strategy is suitable for operation in a moderately trending market; neither too strong nor too weak is appropriate.
-
 ```{python}
 #| echo: false
 import pandas as pd
 
 df_adx = pd.DataFrame({
-    "ADX Value Range": [
-        "0–15",
-        "15–20",
-        "20–30",
-        "30–40",
-        "> 40"
-    ],
+    "ADX Value Range": ["0–15", "15–20", "20–30", "30–40", "> 40"],
     "Explanation": [
         "Very weak trend, sideways market",
         "Weak trend, reversal possible",
@@ -135,26 +115,17 @@ df_adx = pd.DataFrame({
     ],
     "Score (Both Directions)": [0, 2, 5, 2, 0]
 })
-
 df_adx.index = df_adx.index + 1
 df_adx
 ```
 
 ##### 1.4 ATR (Average True Range)
-The **ATR ratio** measures **relative volatility** by comparing the current ATR to its 20-day average:
-`ATR Ratio = Current ATR / 20-day ATR Average`
 ```{python}
 #| echo: false
 import pandas as pd
 
 df_atr = pd.DataFrame({
-    "ATR Value Range": [
-        "> 30",
-        "20 – 30",
-        "10 – 20",
-        "5 – 10",
-        "< 5"
-    ],
+    "ATR Value Range": ["> 30", "20 – 30", "10 – 20", "5 – 10", "< 5"],
     "Explanation": [
         "Extremely high volatility, avoid trading",
         "High volatility, elevated risk",
@@ -164,31 +135,18 @@ df_atr = pd.DataFrame({
     ],
     "Score (Both Directions)": [0, 2, 5, 4, 2]
 })
-
 df_atr.index = df_atr.index + 1
 df_atr
-
 ```
 
 #### 2. Non-Technical Indicator Scoring System
-##### 2.1 Implied volatility
-Options-implied volatility (IV) reflects **market expectations of future price fluctuations**.
-
-- **Low IV**: The market is calm with low volatility, often followed by upward price corrections — favorable for **long** positions.
-- **High IV**: The market is fearful with large swings, making it prone to overreactions — favorable for **short** positions in anticipation of reversals or bubbles bursting.
-
+##### 2.1 Implied Volatility
 ```{python}
 #| echo: false
 import pandas as pd
 
 df_iv = pd.DataFrame({
-    "IV Percentile Range": [
-        "< 10%",
-        "10% – 30%",
-        "30% – 70%",
-        "70% – 90%",
-        "> 90%"
-    ],
+    "IV Percentile Range": ["< 10%", "10% – 30%", "30% – 70%", "70% – 90%", "> 90%"],
     "Long Score": [5, 4, 2, 1, 0],
     "Short Score": [0, 1, 2, 4, 5],
     "Explanation": [
@@ -199,30 +157,17 @@ df_iv = pd.DataFrame({
         "Extreme panic, suitable for shorting"
     ]
 })
-
 df_iv.index = df_iv.index + 1
 df_iv
 ```
 
-
-##### 2.2 10-2 Yield Spread
-The **10-year minus 2-year Treasury yield spread (10–2 spread)** reflects the market’s outlook on long-term vs. short-term economic expectations.
-
-- **Normal (spread > 0%)**: Indicates a healthy, growing economy; supports **long** positions and mean-reversion strategies.
-- **Inverted (spread < 0%)**: Often seen as a sign of recession or heightened risk; favors **short** positions to hedge against economic downturns.
-
+##### 2.2 10–2 Yield Spread
 ```{python}
 #| echo: false
 import pandas as pd
 
 df_yield = pd.DataFrame({
-    "10–2 Spread Range (%)": [
-        "> 1.5",
-        "0.5 – 1.5",
-        "–0.5 – 0.5",
-        "–1.5 – –0.5",
-        "< –1.5"
-    ],
+    "10–2 Spread Range (%)": ["> 1.5", "0.5 – 1.5", "–0.5 – 0.5", "–1.5 – –0.5", "< –1.5"],
     "Long Score": [5, 4, 2, 1, 0],
     "Short Score": [0, 1, 2, 4, 5],
     "Explanation": [
@@ -233,33 +178,58 @@ df_yield = pd.DataFrame({
         "Severe inversion, market panic, short-favoring conditions"
     ]
 })
-
 df_yield.index = df_yield.index + 1
 df_yield
 ```
 
+---
 
 #### 3. Determining Trade Direction & Weight Allocation
+For each stock, we compute both long and short scores as weighted sums of indicator scores:
 
-For each stock, we compute both long and short scores:
+```python
+Total_Long  = 0.25 * EMA_long + 0.25 * MACD_long + 0.10 * ADX + 0.10 * ATR + 0.15 * IV_long + 0.15 * Yield_long
+Total_Short = 0.25 * EMA_short + 0.25 * MACD_short + 0.10 * ADX + 0.10 * ATR + 0.15 * IV_short + 0.15 * Yield_short
+```
 
-- **Total_Long** = 0.25 * EMA_long + 0.25 * MACD_long + 0.1 * ADX + 0.1 * ATR + 0.15 * iv_long + 0.15 * yield_spread_long
-- **Total_Short** = 0.25 * EMA_short + 0.25 * MACD_short + 0.1 * ADX + 0.1 * ATR + 0.15 * iv_short + 0.15 * yield_spread_short
+The direction (LONG/SHORT) is determined based on which score is higher. The higher score is used to allocate capital.
 
-We compare the two totals and select the side with the higher score as the **trading direction** (long or short).
+##### Option A: Without Leverage Control
+- All stocks are scored.
+- Normalize all non-zero scores to sum to 1:
 
-Once the direction is determined for each stock, we normalize scores within each group to allocate weights:
+```python
+weight_i = score_i / sum(|scores|)
+```
+- **Pros**: Simple.
+- **Cons**: May lead to excessive total exposure, especially if all assets are scored as strong.
 
-- **Weight Calculation**:
-  For each stock in the selected group (long or short):
-  `weight_i = score_i / sum(scores in group)`
+##### Option B: With Leverage Control
+- Split stocks into **long group** and **short group** based on score sign.
+- Normalize **within group**, then assign proportions:
 
-- **Position Sign**:
-  - Long positions receive **positive weights**
-  - Short positions receive **negative weights**
+```python
+# Assume MAX_GROSS_LEVERAGE = 1.5, max per stock = 0.2
+# long positions account for 60% of the total leverage
+long_weights  = score_i / sum_long * 0.6 * MAX_GROSS_LEVERAGE
+# short positions account for 40% of the total leverage
+short_weights = score_i / sum_short * 0.4 * MAX_GROSS_LEVERAGE
+```
+- Cap each stock to ±0.2 and re-normalize total exposure to 1.0
+- **Pros**: Controlled leverage, avoids overweight.
+- **Cons**: More complex.
 
-- **Weight Meaning**:
-  The final weight represents **capital allocation ratio** in the portfolio.
+---
+
+#### 4. Execution
+- Entry is performed at the **first hourly timestamp** of the period.
+- Stop-loss and take-profit are set at dynamic thresholds derived from **price volatility**: entry_price*(1±vol_last_month).
+- If either threshold is hit intra-month, the position is closed early. Otherwise, all positions are force-closed at month end.
+
+---
+
+This strategy allows for clear comparison between raw signal-driven allocation and a risk-controlled variant, helping evaluate the cost and benefit of leverage in short-horizon mean reversion trading.
+
 
 
 ### Strategy Outcome
@@ -275,16 +245,15 @@ It will display results such as:
 
 
 #### **Blotter**
-
-<h4>Search by Trading Period:</h4>
-<input type="text" id="blotter-search" placeholder="e.g., 2025.01" style="padding: 5px; margin-bottom: 10px; width: 200px;" />
+##### **Original(without controlling lever)**
+<input type="text" id="blotter-search" placeholder="Search by Period(e.g., 2025.01)" style="padding: 5px; margin-bottom: 10px; width: 300px;" />
 
 <div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
 ```{python}
 #| echo: false
 import pandas as pd
 
-blotter = pd.read_csv("static/blotter.csv")
+blotter = pd.read_csv("static/blotter_original.csv")
 html_blotter = blotter.to_html(index=False, table_id="blotter-table", classes="table table-striped")
 from IPython.display import display, HTML
 display(HTML(html_blotter))
@@ -309,11 +278,42 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+##### **After Controlling Lever**
+<input type="text" id="blotter-search" placeholder="Search by Period(e.g., 2025.01)" style="padding: 5px; margin-bottom: 10px; width: 300px;" />
+
+<div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
+```{python}
+#| echo: false
+import pandas as pd
+
+blotter = pd.read_csv("static/blotter_ctrl_lever.csv")
+html_blotter = blotter.to_html(index=False, table_id="blotter-table", classes="table table-striped")
+from IPython.display import display, HTML
+display(HTML(html_blotter))
+```
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("blotter-search");
+  input.addEventListener("keyup", function () {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("#blotter-table tbody tr");
+    rows.forEach(row => {
+      const dateCell = row.cells[0]?.textContent?.toLowerCase() || "";
+      if (dateCell.includes(filter)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
+});
+</script>
 
 #### **Ledger**
-
-<h4>Search Ledger by Date:</h4>
-<input type="text" id="ledger-search" placeholder="e.g., 2025-04-15" style="padding: 5px; margin-bottom: 10px; width: 200px;" />
+##### **Original(without controlling lever)**
+<input type="text" id="ledger-search" placeholder="Search by Date(e.g., 2025-04-15)" style="padding: 5px; margin-bottom: 10px; width: 300px;" />
 
 <div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
 ```{python}
@@ -321,9 +321,8 @@ document.addEventListener("DOMContentLoaded", function () {
 import pandas as pd
 from IPython.display import display, HTML
 
-ledger = pd.read_csv("static/ledger.csv")
+ledger = pd.read_csv("static/ledger_original.csv")
 
-# 输出 HTML 表格，绑定 table ID
 html_ledger = ledger.to_html(index=False, table_id="ledger-table", classes="table table-striped")
 display(HTML(html_ledger))
 ```
@@ -346,3 +345,110 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+
+
+
+##### **After Controlling Lever**
+<input type="text" id="ledger-search" placeholder="Search by Date(e.g., 2025-04-15)" style="padding: 5px; margin-bottom: 10px; width: 300px;" />
+
+<div style="max-height: 400px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
+```{python}
+#| echo: false
+import pandas as pd
+from IPython.display import display, HTML
+
+ledger = pd.read_csv("static/ledger_ctrl_lever.csv")
+
+html_ledger = ledger.to_html(index=False, table_id="ledger-table", classes="table table-striped")
+display(HTML(html_ledger))
+```
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("ledger-search");
+  input.addEventListener("keyup", function () {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll("#ledger-table tbody tr");
+    rows.forEach(row => {
+      const dateCell = row.cells[0]?.textContent?.toLowerCase() || "";
+      if (dateCell.includes(filter)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  });
+});
+</script>
+
+---
+
+#### **Performance Analysis**
+<h5>initial capital: 1M</h5>
+**End-of-Day Market Value Comparison**
+<iframe src="static/market_value_comparison.html" width="100%" height="568" frameborder="0"></iframe>
+
+**Drawndowns Comparison**
+<iframe src="static/drawdowns_comparison.html" width="100%" height="568" frameborder="0"></iframe>
+
+
+#### **Strategy Metrics Summary**
+
+```{python}
+#| echo: false
+import pandas as pd
+
+performance_df = pd.read_csv("static/performance_metrics.csv")
+html_performance = performance_df.to_html(index=False, table_id="performance-table", classes="table table-striped")
+from IPython.display import display, HTML
+display(HTML(html_performance))
+```
+
+#### **Performance Analysis**
+
+- **Growth trajectory:** Without leverage control, the portfolio ended below the starting capital ($1 M → $0.83M), reflecting a net loss. With leverage control, it modestly grew ($1 M → $1.01M), demonstrating sustainable gains.
+- **Cumulative & geometric returns:** Controlled leverage turned a deep drawdown into positive growth, and the market value of portfolio kept higher than at begining over the period, confirming mean reversion works when risk is contained.
+- **Per-trade efficiency:** Average return per trade improved from **–0.27%** to **+0.01%**, indicating higher hit rate and profitability.
+- **Risk metrics:** Volatility dropped from **27.28%** to **6.76%**, and max drawdown shrank from **26.63%** to **5.72%**, showcasing tighter drawdown control.
+- **Sharpe ratio shift:** From **–1.14** (underperforming risk-free) to **0.27** (delivering positive risk-adjusted return).
+
+This shows that **mean reversion signals** can generate returns, but only disciplined risk management is necessary, such as controlling lever and limiting the weight of single asset. **Leverage control** transforms a volatile, loss‐making process into a stable, profitable strategy.
+
+
+### Limitations and Future Enhancements
+Even with leverage control, the current implementation has several limitations:
+
+1. **Simplistic Signal Framework**:
+   - Relies solely on fixed-threshold scores for EMA deviation, MACD, ADX, ATR, IV, and yield spread.
+   - Does not adapt thresholds to changing market regimes (e.g., high-volatility vs. low-volatility periods).
+
+2. **Lack of Transaction Cost Modeling**:
+   - Omits commissions, slippage, and spreads, which can erode returns—especially for short-term or high-turnover strategies.
+
+3. **Ignoring Market Microstructure**:
+   - Hourly and daily data may not capture intraday liquidity constraints or order-book dynamics, leading to unrealistic execution assumptions.
+
+4. **No Regime Detection or Regime-Based Allocation**:
+   - Treats all periods equally; fails to switch off mean reversion signals during strong trending environments (e.g., bull/bear markets).
+
+5. **Uniform Indicator Weighting**:
+   - Assigns fixed weights to each indicator; does not account for their varying predictive power over time. A dynamic or machine-learning–based weighting scheme could improve signal quality.
+
+6. **Single Timeframe Analysis**:
+   - Uses daily and hourly frequencies but ignores higher-frequency signals or multi-timeframe confirmation that can reduce false signals.
+
+7. **Tail Risk and Black Swan Events**:
+   - Lacks a stress-test mechanism for extreme market moves or systemic shocks. Consider adding volatility overlays or drawdown limits.
+
+#### **Future Enhancements**:
+
+- Implement regime-switching to adapt thresholds and weights.
+
+- Incorporate transaction cost estimates into portfolio optimization.
+
+- Explore multi-timeframe signals and alternative data (e.g., sentiment, order flow).
+
+- Use adaptive indicator weighting via machine learning or Bayesian updating.
+
+- Add tail-risk protection, such as option hedges or dynamic stop adjustments.
